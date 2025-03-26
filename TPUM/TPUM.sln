@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35913.81
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPUM", "TPUM\TPUM.csproj", "{22D94533-B66C-4D52-9576-0B45DDCA8D91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TPUMTests", "TPUMTests\TPUMTests.csproj", "{DAF41873-71C2-455E-8FAB-EAFE93272135}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{22D94533-B66C-4D52-9576-0B45DDCA8D91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22D94533-B66C-4D52-9576-0B45DDCA8D91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22D94533-B66C-4D52-9576-0B45DDCA8D91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22D94533-B66C-4D52-9576-0B45DDCA8D91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAF41873-71C2-455E-8FAB-EAFE93272135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAF41873-71C2-455E-8FAB-EAFE93272135}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAF41873-71C2-455E-8FAB-EAFE93272135}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAF41873-71C2-455E-8FAB-EAFE93272135}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9C78161C-DF61-402A-AA86-0AB22E43B220}
+	EndGlobalSection
+EndGlobal
