@@ -43,6 +43,8 @@ namespace Logic
                     return false;
                 }
 
+                Console.WriteLine($"Boat {boat.Name} has been buyed");
+                
                 myDataAPI.RemoveBoat(id);
                 return true;
             }

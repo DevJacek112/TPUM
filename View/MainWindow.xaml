@@ -15,17 +15,12 @@
 
 
     <Window.DataContext>
-        <vm:ShopViewModel />
+        <vm:ViewModelAPI />
     </Window.DataContext>
 
     <Grid>
         <StackPanel>
-            <!-- Guzik nad listą -->
-            <Button Content="Wyjdź z aplikacji" Width="150" Height="40" Margin="10" HorizontalAlignment="Right"
-                    Command="{Binding test}" />
-
-            <!-- Lista produktów -->
-            <ItemsControl ItemsSource="{Binding ObservableProducts}" BorderThickness="0">
+            <ItemsControl ItemsSource="{Binding ModelBoats}" BorderThickness="0">
                 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -38,22 +33,17 @@
 
                             <Border BorderBrush="Black" BorderThickness="2" CornerRadius="5" Padding="5">
                                 <StackPanel>
-                                    <!-- Nazwa + opis -->
                                     <StackPanel>
-                                        <TextBlock Text="{Binding ProductImage}" FontSize="16" FontWeight="Bold" />
-                                        <TextBlock Text="{Binding ProductDescription}" FontSize="14"
+                                        <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" />
+                                        <TextBlock Text="{Binding Description}" FontSize="14"
+                                                   TextWrapping="Wrap" />
+                                        <TextBlock Text="Cena:" FontSize="16" />
+                                        <TextBlock Text="{Binding Price}" FontSize="14"
                                                    TextWrapping="Wrap" />
                                     </StackPanel>
-
-                                    <!-- Obrazek -->
-                                    <Image Source="{Binding ProductImage}" Width="200" Height="150" Stretch="Uniform" />
-                                    
-                                    <TextBlock>
-                                        <Run Text="Pozostało sztuk: 2137" FontSize="14"/>
-                                        <Run Text="{Binding tempiloscsztuk}"/>
-                                    </TextBlock>
-
-                                    <Button Content="Kup" Width="150" Height="40" Margin="10" Grid.Column="2" />
+                                        <Button Content="Zakup łódź" Width="150" Height="40" Margin="10"
+                                            Command="{Binding DataContext.BuyBoatCom, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}" />
                                 </StackPanel>
                             </Border>
                         </Grid>
