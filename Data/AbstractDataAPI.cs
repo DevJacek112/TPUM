@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace Data
 {
@@ -13,7 +9,7 @@ namespace Data
             return new DataAPI();
         }
 
-        public abstract List<IBoat> GetAllBoats();
+        public abstract ObservableCollection<IBoat> GetAllBoats();
         public abstract IBoat? GetBoatById(int id);
         public abstract void AddBoat(int id, string name, string description, float price);
         public abstract void RemoveBoat(int id);
@@ -29,7 +25,7 @@ namespace Data
                 user = new User("Uzytkownik1", 150.0f);
             }
 
-            public override List<IBoat> GetAllBoats()
+            public override ObservableCollection<IBoat> GetAllBoats()
             {
                 return boats.GetAllBoats();
             }

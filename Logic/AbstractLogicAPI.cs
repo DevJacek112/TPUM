@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using System.Collections.ObjectModel;
+using Data;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -11,7 +12,7 @@ namespace Logic
             return new LogicAPI(dataAPI ?? AbstractDataAPI.createInstance());
         }
 
-        public abstract List<IBoat> GetAllBoats();
+        public abstract ObservableCollection<IBoat> GetAllBoats();
         public abstract void addBoat(string name, string description, float price);
         public abstract bool buyBoat(int id);
         public abstract event Action OnTimePassed;
@@ -33,7 +34,7 @@ namespace Logic
                 IdCounter = dataAPI.GetAllBoats().Count + 1;
             }
 
-            public override List<IBoat> GetAllBoats()
+            public override ObservableCollection<IBoat> GetAllBoats()
             {
                 lock(padlock)
                 {
@@ -59,8 +60,6 @@ namespace Logic
                         return false;
                     }
 
-                    Console.WriteLine($"Boat {boat.Name} has been bought");
-
                     myDataAPI.RemoveBoat(id);
                     return true;
                 }
@@ -74,17 +73,10 @@ namespace Logic
                 timer.Start();
             }
             
-            
             private void TimerElapsed(object sender, ElapsedEventArgs e)
             {
                 secondsElapsed++;
                 OnTimePassed?.Invoke();
-                
-                if (secondsElapsed > 5)
-                {
-                    Console.WriteLine("Logika zaktualizowala cene");
-                    GetAllBoats()[1].Price--;
-                }
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using Logic;
-
 namespace Model
 {
     public abstract class AbstractModelAPI
@@ -11,7 +11,7 @@ namespace Model
         
         public static AbstractModelAPI createInstance(AbstractLogicAPI abstractLogicAPI = default)
         {
-            return new ModelAPI(abstractLogicAPI);
+            return new ModelAPI();
         }
         
         public abstract void BuyBoat(int id);
@@ -26,15 +26,17 @@ namespace Model
             }
             
             private AbstractLogicAPI logicAPI;
-            public ModelAPI(AbstractLogicAPI abstractLogicAPI)
+            public ModelAPI()
             {
                 logicAPI = AbstractLogicAPI.createInstance();
-                //temporary manually adding boats
-                logicAPI.addBoat("lodz1", "opis lodzi1", 21);
-                logicAPI.addBoat("lodz2", "opis lodzi2", 22);
-                logicAPI.addBoat("lodz3", "opis lodzi3", 23);
                 logicAPI.StartTimer();
                 logicAPI.OnTimePassed += UpdateTimer;
+                logicAPI.GetAllBoats().CollectionChanged += CollectionUpdated;
+                LoadAllBoats();
+            }
+
+            private void CollectionUpdated(object? sender, NotifyCollectionChangedEventArgs e)
+            {
                 LoadAllBoats();
             }
             
@@ -47,7 +49,6 @@ namespace Model
             {
                 modelBoats.Clear();
                 var logicBoats = logicAPI.GetAllBoats();
-
                 foreach (var boat in logicBoats)
                 {
                     modelBoats.Add(new ModelBoat(boat.Id, boat.Name, boat.Description, boat.Price));
@@ -57,7 +58,6 @@ namespace Model
             public override void BuyBoat(int id)
             {
                 logicAPI.buyBoat(id);
-                LoadAllBoats();
             }
 
             public override event Action OnTimePassedModel;

@@ -1,16 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace Data
 {
     internal class BoatRepository : IBoatRepository
     {
-        private List<IBoat> boats = new();
+        public BoatRepository()
+        {
+            AddBoat(new Boat(1,"lodz1", "opis lodzi1", 21));
+            AddBoat(new Boat(2,"lodz2", "opis lodzi2", 22));
+            AddBoat(new Boat(3,"lodz3", "opis lodzi3", 23));
+        }
 
-        public override List<IBoat> GetAllBoats()
+        private ObservableCollection<IBoat> boats = new();
+
+        public override ObservableCollection<IBoat> GetAllBoats()
         {
             return boats;
         }

@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-namespace Model;
+﻿namespace Model;
 
 public class ModelBoat : IModelBoat
 {
