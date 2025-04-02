@@ -21,10 +21,12 @@ namespace Data
         private class DataAPI : AbstractDataAPI
         {
             private readonly BoatRepository boats;
-            
+            private readonly IUser user;
+
             public DataAPI()
             {
                 boats = new BoatRepository();
+                user = new User("Uzytkownik1", 150.0f);
             }
 
             public override List<IBoat> GetAllBoats()
@@ -47,14 +49,6 @@ namespace Data
                 boats.RemoveBoat(id);
 
             }
-
-
-
-
-
-
-
-
         }
     }
 }
