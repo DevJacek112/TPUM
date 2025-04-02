@@ -1,0 +1,18 @@
+diff a/Model/ModelAPI.cs b/Model/ModelAPI.cs	(rejected hunks)
+@@ -17,14 +17,10 @@
+         
+         public abstract void BuyBoat(int id);
+         
++        public abstract event Action OnTimePassedModel;
++        
+         internal class ModelAPI : AbstractModelAPI
+         {
+-            public override ObservableCollection<IModelBoat> GetModelBoats()
+-            {
+-                return modelBoats;
+-            }
+-            
+-            private AbstractLogicAPI logicAPI;
+             public ModelAPI(AbstractLogicAPI abstractLogicAPI)
+             {
+                 logicAPI = AbstractLogicAPI.createInstance();
