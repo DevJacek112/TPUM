@@ -20,6 +20,8 @@
 
     <Grid>
         <StackPanel>
+            <TextBlock Text="{Binding ActualTime}" FontSize="16" Margin="20" />
+            
             <ItemsControl ItemsSource="{Binding ModelBoats}" BorderThickness="0">
                 
                 <ItemsControl.ItemTemplate>

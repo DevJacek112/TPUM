@@ -1,4 +1,6 @@
 ﻿using Data;
+using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace Logic
 {
@@ -12,13 +14,16 @@ namespace Logic
         public abstract List<IBoat> GetAllBoats();
         public abstract void addBoat(string name, string description, float price);
         public abstract bool buyBoat(int id);
-        public abstract event Action OnPriceUpdated;
+        public abstract event Action OnTimePassed;
+        public abstract void StartTimer();
 
+        private static Timer timer;
+        private static int secondsElapsed = 0;
         private class LogicAPI : AbstractLogicAPI
         {
             private readonly AbstractDataAPI myDataAPI;
             private int IdCounter = 1;
-            public override event Action OnPriceUpdated;
+            public override event Action OnTimePassed;
 
             public LogicAPI(AbstractDataAPI? dataAPI)
             {
@@ -50,24 +55,25 @@ namespace Logic
                 return true;
             }
 
-            public void ApplyDiscount()
+            public override void StartTimer()
             {
-                var currentTime = DateTime.Now.Hour;
-
-                foreach (var boat in myDataAPI.GetAllBoats())
+                timer = new Timer(1000);
+                timer.Elapsed += TimerElapsed;
+                timer.AutoReset = true;
+                timer.Start();
+            }
+            
+            
+            private void TimerElapsed(object sender, ElapsedEventArgs e)
+            {
+                secondsElapsed++;
+                OnTimePassed?.Invoke();
+                
+                if (secondsElapsed > 5)
                 {
-                    // Apply 50% discount between 14:00 and 18:00
-                    if (currentTime >= 14 && currentTime < 18)
-                    {
-                        boat.Price *= 0.5f;  // Apply 50% discount
-                    }
-                    else
-                    {
-                        boat.Price *= 2.0f;  // Restore the original price
-                    }
+                    Console.WriteLine("Logika zaktualizowala cene");
+                    GetAllBoats()[1].Price--;
                 }
-
-                OnPriceUpdated?.Invoke();  // Trigger the event after price update
             }
         }
 

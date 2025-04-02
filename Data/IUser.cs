@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public interface IUser
+    public abstract class IUser
     {
         public abstract string Name { get; }
         public abstract float Money { get; set; }
-        public abstract List<IBoat> myBoats;
     }
 }

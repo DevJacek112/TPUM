@@ -11,7 +11,6 @@ namespace Data
     {
         public override string Name { get; }
         public override float Money { get; set; }
-        public override List<IBoat> MyBoats { get; set; }
 
         public User(string name, float money) 
         {
@@ -23,7 +22,6 @@ namespace Data
         {
             Name = info.GetString("Name") ?? "Unknown";
             Money = info.GetSingle("Money");
-            MyBoats = (List<IBoat>)info.GetValue("MyBoats", typeof(List<IBoat>)) ?? new List<IBoat>();
         }
 
         // Serialization method
@@ -31,7 +29,6 @@ namespace Data
         {
             info.AddValue("Name", Name);
             info.AddValue("Money", Money);
-            info.AddValue("MyBoats", MyBoats, typeof(List<IBoat>));
         }
     }
 }
