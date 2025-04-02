@@ -16,25 +16,25 @@ namespace Tests
         [TestMethod]
         public void AddBoat()
         {
-            dataAPI.AddBoat(0, "Lodka1", "Mala lodka", 100.0f);
-            var boatTest = dataAPI.GetAllBoats()[0];
+            dataAPI.AddBoat(4, "Lodka4", "Mala lodka", 100.0f);
+            var boatTest = dataAPI.GetAllBoats()[3];
 
-            Assert.AreEqual(dataAPI.GetAllBoats().Count, 1);
-            Assert.AreEqual(boatTest.Name, "Lodka1");
-            Assert.AreEqual(boatTest.Description, "Mala lodka");
-            Assert.AreEqual(boatTest.Price, 100.0f);
+            Assert.AreEqual(4, dataAPI.GetAllBoats().Count);
+            Assert.AreEqual("Lodka4", boatTest.Name);
+            Assert.AreEqual("Mala lodka", boatTest.Description);
+            Assert.AreEqual(100.0f, boatTest.Price);
         }
 
         [TestMethod]
         public void GetBoatById()
         {
-            dataAPI.AddBoat(0, "Lodka", "Duza lodz", 110.0f);
-            var boatTest = dataAPI.GetBoatById(0);
+            dataAPI.AddBoat(4, "Lodka", "Duza lodz", 110.0f);
+            var boatTest = dataAPI.GetBoatById(4);
 
-            Assert.AreEqual(dataAPI.GetAllBoats().Count, 1);
-            Assert.AreEqual(boatTest.Name, "Lodka");
-            Assert.AreEqual(boatTest.Description, "Duza lodz");
-            Assert.AreEqual(boatTest.Price, 110.0f);
+            Assert.AreEqual(4, dataAPI.GetAllBoats().Count);
+            Assert.AreEqual("Lodka", boatTest.Name);
+            Assert.AreEqual("Duza lodz", boatTest.Description);
+            Assert.AreEqual(110.0f, boatTest.Price);
         }
 
         [TestMethod]
@@ -43,9 +43,9 @@ namespace Tests
             dataAPI.AddBoat(0, "Lodka", "Duza lodz", 110.0f);
             var boatTest = dataAPI.GetBoatById(0);
 
-            Assert.AreEqual(dataAPI.GetAllBoats().Count, 1);
+            Assert.AreEqual(4, dataAPI.GetAllBoats().Count);
             dataAPI.RemoveBoat(0);
-            Assert.AreEqual(dataAPI.GetAllBoats().Count, 0);
+            Assert.AreEqual(3, dataAPI.GetAllBoats().Count);
         }
     }
     

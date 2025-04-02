@@ -19,19 +19,19 @@ namespace Tests
         [TestMethod]
         public void addBoat()
         {
-            Assert.AreEqual(logicAPI.GetAllBoats().Count, 0);
-            logicAPI.addBoat("Lodka1", "Mala lodka", 100.0f);
-            Assert.AreEqual(logicAPI.GetAllBoats().Count, 1);
-            Assert.AreEqual(logicAPI.GetAllBoats()[0].Name, "Lodka1");
+            Assert.AreEqual(3, logicAPI.GetAllBoats().Count);
+            logicAPI.addBoat("Lodka4", "Mala lodka", 100.0f);
+            Assert.AreEqual(4, logicAPI.GetAllBoats().Count);
+            Assert.AreEqual("Lodka4", logicAPI.GetAllBoats()[3].Name);
         }
 
         [TestMethod]
         public void buyBoat()
         {
-            Assert.AreEqual(false, logicAPI.buyBoat(1));
+            Assert.AreEqual(false, logicAPI.buyBoat(4));
             logicAPI.addBoat("Lodka1", "Mala lodka", 100.0f);
-            Assert.AreEqual(true, logicAPI.buyBoat(1));
-            Assert.AreEqual(logicAPI.GetAllBoats().Count, 0);
+            Assert.AreEqual(true, logicAPI.buyBoat(4));
+            Assert.AreEqual(3, logicAPI.GetAllBoats().Count);
         }
     }
 }
