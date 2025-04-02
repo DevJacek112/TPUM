@@ -48,6 +48,7 @@ namespace Model
             public override void BuyBoat(int id)
             {
                 logicAPI.buyBoat(id);
+                LoadAllBoats();
             }
         }
 

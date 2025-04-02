@@ -8,7 +8,7 @@ namespace Data
 {
     internal class BoatRepository : IBoatRepository
     {
-        private readonly List<IBoat> boats = new();
+        private List<IBoat> boats = new();
 
         public override List<IBoat> GetAllBoats()
         {
