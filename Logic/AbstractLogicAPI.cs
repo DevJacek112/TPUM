@@ -23,7 +23,9 @@ namespace Logic
         {
             private readonly AbstractDataAPI myDataAPI;
             private int IdCounter = 1;
+            private Object padlock = new object();
             public override event Action OnTimePassed;
+
 
             public LogicAPI(AbstractDataAPI? dataAPI)
             {
@@ -33,26 +35,35 @@ namespace Logic
 
             public override List<IBoat> GetAllBoats()
             {
-                return myDataAPI.GetAllBoats();
+                lock(padlock)
+                {
+                    return myDataAPI.GetAllBoats();
+                }
             }
 
             public override void addBoat(string name, string description, float price)
             {
-                myDataAPI.AddBoat(IdCounter++, name, description, price);
+                lock(padlock)
+                {
+                    myDataAPI.AddBoat(IdCounter++, name, description, price);
+                }
             }
 
             public override bool buyBoat(int id)
             {
-                var boat = myDataAPI.GetBoatById(id);
-                if (boat == null)
+                lock (padlock)
                 {
-                    return false;
-                }
+                    var boat = myDataAPI.GetBoatById(id);
+                    if (boat == null)
+                    {
+                        return false;
+                    }
 
-                Console.WriteLine($"Boat {boat.Name} has been bought");
-                
-                myDataAPI.RemoveBoat(id);
-                return true;
+                    Console.WriteLine($"Boat {boat.Name} has been bought");
+
+                    myDataAPI.RemoveBoat(id);
+                    return true;
+                }
             }
 
             public override void StartTimer()
