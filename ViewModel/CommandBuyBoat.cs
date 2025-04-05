@@ -5,10 +5,10 @@ namespace ViewModel
 {
     public class CommandBuyBoat : ICommand
     {
-        private readonly AbstractModelAPI modelAPI;
+        private readonly ClientAbstractModelAPI modelAPI;
         public event EventHandler? CanExecuteChanged;
     
-        public CommandBuyBoat(AbstractModelAPI modelAPI)
+        public CommandBuyBoat(ClientAbstractModelAPI modelAPI)
         {
             this.modelAPI = modelAPI ?? throw new ArgumentNullException(nameof(modelAPI));
         }

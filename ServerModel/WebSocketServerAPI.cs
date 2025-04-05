@@ -39,6 +39,8 @@ public class WebSocketServerAPI
 
     private async Task HandleConnectionAsync(WebSocket socket)
     {
+        await SendBoatsList(socket);
+        
         var buffer = new byte[1024];
 
         while (socket.State == WebSocketState.Open)
@@ -68,5 +70,31 @@ public class WebSocketServerAPI
     {
         public string Type { get; set; } = "";
         public int Id { get; set; }
+    }
+    
+    private async Task SendBoatsList(WebSocket socket)
+    {
+        var boats = GetBoatsFromDatabase(); // Zastąp odpowiednią metodą, która zwróci listę łodzi
+        var boatsMessage = new
+        {
+            type = "boats",
+            boats = boats
+        };
+
+        var json = JsonSerializer.Serialize(boatsMessage);
+        var buffer = Encoding.UTF8.GetBytes(json);
+        var segment = new ArraySegment<byte>(buffer);
+
+        await socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+    }
+
+    private List<BoatDTO> GetBoatsFromDatabase()
+    {
+        // Przykładowa lista łodzi
+        return new List<BoatDTO>
+        {
+            new BoatDTO { Id = 1, Name = "Łódź A", Description = "Model A", Price = 50000 },
+            new BoatDTO { Id = 2, Name = "Łódź B", Description = "Model B", Price = 60000 }
+        };
     }
 }

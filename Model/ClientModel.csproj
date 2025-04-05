@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ClientLogic\ClientLogic.csproj" />
     <ProjectReference Include="..\Logic\ServerLogic.csproj" />
   </ItemGroup>
 

@@ -5,12 +5,12 @@ namespace Tests
     [TestClass]
     public sealed class DataTests
     {
-        private AbstractDataAPI dataAPI;
+        private ServerAbstractDataAPI dataAPI;
 
         [TestInitialize]
         public void Setup()
         {
-            dataAPI = AbstractDataAPI.createInstance();
+            dataAPI = ServerAbstractDataAPI.createInstance();
         }
 
         [TestMethod]

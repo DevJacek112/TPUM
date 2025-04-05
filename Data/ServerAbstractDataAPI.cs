@@ -2,11 +2,11 @@
 
 namespace Data
 {
-    public abstract class AbstractDataAPI
+    public abstract class ServerAbstractDataAPI
     {
-        public static AbstractDataAPI createInstance()
+        public static ServerAbstractDataAPI createInstance()
         {
-            return new DataAPI();
+            return new ServerDataAPI();
         }
 
         public abstract ObservableCollection<IBoat> GetAllBoats();
@@ -14,12 +14,12 @@ namespace Data
         public abstract void AddBoat(int id, string name, string description, float price);
         public abstract void RemoveBoat(int id);
 
-        private class DataAPI : AbstractDataAPI
+        private class ServerDataAPI : ServerAbstractDataAPI
         {
             private readonly BoatRepository boats;
             private readonly IUser user;
 
-            public DataAPI()
+            public ServerDataAPI()
             {
                 boats = new BoatRepository();
                 user = new User("Uzytkownik1", 150.0f);
@@ -43,7 +43,6 @@ namespace Data
             public override void RemoveBoat(int id)
             {
                 boats.RemoveBoat(id);
-
             }
         }
     }

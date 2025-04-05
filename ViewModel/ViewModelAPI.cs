@@ -12,7 +12,7 @@ public class ViewModelAPI : INotifyPropertyChanged
     
     public ObservableCollection<IModelBoat> ModelBoats => modelAPI.GetModelBoats();
     
-    private AbstractModelAPI modelAPI;
+    private ClientAbstractModelAPI modelAPI;
     private int actualTime;
 
     public int ActualTime
@@ -27,9 +27,9 @@ public class ViewModelAPI : INotifyPropertyChanged
     
     public ViewModelAPI()
     {
-        modelAPI = AbstractModelAPI.createInstance();
+        modelAPI = ClientAbstractModelAPI.createInstance();
         BuyBoatCom = new CommandBuyBoat(modelAPI);
-        modelAPI.OnTimePassedModel += UpdateGUITimer;
+        //modelAPI.OnTimePassedModel += UpdateGUITimer;
         ActualTime = 0;
     }
 

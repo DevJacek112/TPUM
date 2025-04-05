@@ -1,51 +1,53 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using ClientLogic;
 using Logic;
 namespace Model
 {
-    public abstract class AbstractModelAPI
+    public abstract class ClientAbstractModelAPI
     {
         public abstract ObservableCollection<IModelBoat> GetModelBoats();
         
         private ObservableCollection<IModelBoat> modelBoats = new ObservableCollection<IModelBoat>();
         
-        public static AbstractModelAPI createInstance(AbstractLogicAPI abstractLogicAPI = default)
+        public static ClientAbstractModelAPI createInstance(AbstractServerLogicAPI abstractServerLogicApi = default)
         {
             return new ModelAPI();
         }
         
         public abstract void BuyBoat(int id);
         
-        public abstract event Action OnTimePassedModel;
+        //public abstract event Action OnTimePassedModel;
         
-        internal class ModelAPI : AbstractModelAPI
+        private class ModelAPI : ClientAbstractModelAPI
         {
+            public ModelAPI()
+            {
+                logicAPI = ClientAbstractLogicAPI.createInstance();
+                //logicAPI.StartTimer();
+                //logicAPI.OnTimePassed += UpdateTimer;
+                logicAPI.GetAllBoats().CollectionChanged += CollectionUpdated;
+                LoadAllBoats();
+            }
+            
             public override ObservableCollection<IModelBoat> GetModelBoats()
             {
                 return modelBoats;
             }
             
-            private AbstractLogicAPI logicAPI;
-            public ModelAPI()
-            {
-                logicAPI = AbstractLogicAPI.createInstance();
-                logicAPI.StartTimer();
-                logicAPI.OnTimePassed += UpdateTimer;
-                logicAPI.GetAllBoats().CollectionChanged += CollectionUpdated;
-                LoadAllBoats();
-            }
+            private ClientAbstractLogicAPI logicAPI;
 
             private void CollectionUpdated(object? sender, NotifyCollectionChangedEventArgs e)
             {
                 LoadAllBoats();
             }
             
-            public void UpdateTimer()
+            /*public void UpdateTimer()
             {
                 OnTimePassedModel?.Invoke();
-            }
+            }*/
 
-            public void LoadAllBoats()
+            private void LoadAllBoats()
             {
                 modelBoats.Clear();
                 var logicBoats = logicAPI.GetAllBoats();
@@ -60,7 +62,7 @@ namespace Model
                 logicAPI.buyBoat(id);
             }
 
-            public override event Action OnTimePassedModel;
+            //public override event Action OnTimePassedModel;
         }
 
     }

@@ -30,6 +30,9 @@ public class WebSocketClientAPI
         Console.WriteLine($"📤 Wysłano: {json}");
     }
 
+    // Event, na który inne klasy będą subskrybować, by odebrać surowe dane
+    public event Action<string>? OnRawMessageReceived;
+
     private async Task ListenAsync()
     {
         var buffer = new byte[1024];
@@ -37,7 +40,10 @@ public class WebSocketClientAPI
         {
             var result = await _socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             string response = Encoding.UTF8.GetString(buffer, 0, result.Count);
-            Console.WriteLine($"📨 Odpowiedź od serwera: {response}");
+            Console.WriteLine($"📨 Odebrano: {response}");
+
+            // Wywołanie eventu po odebraniu surowych danych
+            OnRawMessageReceived?.Invoke(response);
         }
     }
 }

@@ -6,6 +6,7 @@
         {
             var server = new WebSocketServerAPI();
             await server.StartAsync();
+            
         }
     }
 }
