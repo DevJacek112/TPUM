@@ -29,13 +29,18 @@ public class ViewModelAPI : INotifyPropertyChanged
     {
         modelAPI = ClientAbstractModelAPI.createInstance();
         BuyBoatCom = new CommandBuyBoat(modelAPI);
-        //modelAPI.OnTimePassedModel += UpdateGUITimer;
         ActualTime = 0;
+        
+        modelAPI.actualTime.Subscribe(
+            x =>UpdateGUITimer(x),  // onNext
+            ex => Console.WriteLine($"Error: {ex.Message}"),         // onError
+            () => Console.WriteLine("End of streaming.")           // onCompleted
+        );
     }
 
-    private void UpdateGUITimer()
+    private void UpdateGUITimer(int time)
     {
-        ActualTime++;
+        ActualTime = time;
     }
 
     protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

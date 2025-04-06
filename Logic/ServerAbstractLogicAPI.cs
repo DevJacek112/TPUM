@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Data;
 using System.Timers;
 using Timer = System.Timers.Timer;
@@ -15,22 +17,23 @@ namespace Logic
         public abstract ObservableCollection<IBoat> GetAllBoats();
         public abstract void addBoat(string name, string description, float price);
         public abstract bool buyBoat(int id);
-        public abstract event Action OnTimePassed;
-        public abstract void StartTimer();
 
         private static Timer timer;
+        
         private static int secondsElapsed = 0;
+        private Subject<int> actualTimeSubject = new Subject<int>();
+        public IObservable<int> actualTime => actualTimeSubject.AsObservable();
         private class LogicApi : ServerAbstractLogicAPI
         {
             private readonly ServerAbstractDataAPI myDataAPI;
             private int IdCounter = 1;
             private Object padlock = new object();
-            public override event Action OnTimePassed;
             
             public LogicApi(ServerAbstractDataAPI? dataAPI)
             {
                 myDataAPI = dataAPI;
                 IdCounter = dataAPI.GetAllBoats().Count + 1;
+                StartTimer();
             }
 
             public override ObservableCollection<IBoat> GetAllBoats()
@@ -64,18 +67,18 @@ namespace Logic
                 }
             }
 
-            public override void StartTimer()
+            private void StartTimer()
             {
                 timer = new Timer(1000);
                 timer.Elapsed += TimerElapsed;
                 timer.AutoReset = true;
                 timer.Start();
             }
-            
+
             private void TimerElapsed(object sender, ElapsedEventArgs e)
             {
                 secondsElapsed++;
-                OnTimePassed?.Invoke();
+                actualTimeSubject.OnNext(secondsElapsed);
             }
         }
 

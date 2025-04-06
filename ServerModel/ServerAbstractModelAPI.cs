@@ -15,6 +15,7 @@ public abstract class ServerAbstractModelAPI
     public abstract void DeserializeString(string json);
     
     public event Action<string>? OnBoatsListReady;
+    public event Action<string>? OnTimePassed;
     
     public abstract void OnClientConnected();
     
@@ -30,6 +31,12 @@ public abstract class ServerAbstractModelAPI
         public ServerModelAPI(ServerAbstractLogicAPI? logicAPI)
         {
             myLogicAPI = logicAPI;
+            
+            myLogicAPI.actualTime.Subscribe(
+                x =>PrepareAndSendTimePassed(x),  // onNext
+                ex => Console.WriteLine($"Error: {ex.Message}"),         // onError
+                () => Console.WriteLine("End of streaming.")           // onCompleted
+            );
         }
         
         public override void DeserializeString(string json)
@@ -52,11 +59,24 @@ public abstract class ServerAbstractModelAPI
                 Console.WriteLine($"Can't deserialize: {e.Message}");
             }   
         }
-
+        
         private class BuyBoatMessage
         {
             public string Type { get; set; } = "";
             public int Id { get; set; }
+        }
+
+        private void PrepareAndSendTimePassed(int actualTime)
+        {
+            Console.WriteLine(actualTime);
+            var message = new
+            {
+                type = "timeUpdate",
+                time = actualTime
+            };
+
+            string json = JsonSerializer.Serialize(message);
+            OnTimePassed?.Invoke(json);
         }
 
         public void PrepareAndSendBoatsList()
@@ -64,11 +84,9 @@ public abstract class ServerAbstractModelAPI
             var boats = GetBoatsFromDatabase();
             var message = new
             {
-                type = "boats",
+                type = "boatsListUpdate",
                 boats = boats
             };
-            
-            Console.WriteLine($"Sending boats to database: {JsonSerializer.Serialize(message)}");
 
             string json = JsonSerializer.Serialize(message);
             OnBoatsListReady?.Invoke(json);

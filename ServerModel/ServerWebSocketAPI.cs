@@ -15,12 +15,17 @@ public class ServerWebSocketAPI
         _httpListener = new HttpListener();
         _httpListener.Prefixes.Add("http://localhost:5000/ws/");
         _serverAbstractModel = ServerAbstractModelAPI.createInstance();
+        
+        //boat list update
         _serverAbstractModel.OnBoatsListReady += async (json) =>
         {
-            if (_connectedSocket != null && _connectedSocket.State == WebSocketState.Open)
-            {
-                await SendRawJsonAsync(_connectedSocket, json);
-            }
+            await SendRawJsonAsync(json);
+        };
+        
+        //time passed
+        _serverAbstractModel.OnTimePassed += async (json) =>
+        {
+            await SendRawJsonAsync(json);
         };
     }
 
@@ -60,11 +65,14 @@ public class ServerWebSocketAPI
             _serverAbstractModel.DeserializeString(json);
         }
     }
-    
-    public async Task SendRawJsonAsync(WebSocket socket, string json)
+
+    public async Task SendRawJsonAsync(string json)
     {
-        var buffer = Encoding.UTF8.GetBytes(json);
-        var segment = new ArraySegment<byte>(buffer);
-        await socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+        if (_connectedSocket != null && _connectedSocket.State == WebSocketState.Open)
+        {
+            var buffer = Encoding.UTF8.GetBytes(json);
+            var segment = new ArraySegment<byte>(buffer);
+            await _connectedSocket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+        }
     }
 }

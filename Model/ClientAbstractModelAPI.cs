@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using ClientLogic;
 
 namespace Model
@@ -15,6 +17,9 @@ namespace Model
             return new ModelAPI();
         }
         
+        private Subject<int> actualTimeSubject = new Subject<int>();
+        public IObservable<int> actualTime => actualTimeSubject.AsObservable();
+        
         public abstract void BuyBoat(int id);
         
         //public abstract event Action OnTimePassedModel;
@@ -28,6 +33,12 @@ namespace Model
                 //logicAPI.OnTimePassed += UpdateTimer;
                 logicAPI.GetAllBoats().CollectionChanged += CollectionUpdated;
                 LoadAllBoats();
+                
+                logicAPI.actualTime.Subscribe(
+                    x =>actualTimeSubject.OnNext(x),  // onNext
+                    ex => Console.WriteLine($"Error: {ex.Message}"),         // onError
+                    () => Console.WriteLine("End of streaming.")           // onCompleted
+                );
             }
             
             public override ObservableCollection<IModelBoat> GetModelBoats()

@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 using System.Text.Json;
+using System.Reactive.Subjects;
 
 namespace ClientData;
 
@@ -12,6 +14,9 @@ public abstract class ClientAbstractDataAPI
     
     public abstract ObservableCollection<BoatDTO> GetAllBoats();
     public abstract BoatDTO? GetBoatById(int id);
+    
+    private Subject<int> actualTimeSubject = new Subject<int>();
+    public IObservable<int> actualTime => actualTimeSubject.AsObservable();
 
     public abstract void BuyBoatById(int id);
 
@@ -19,6 +24,7 @@ public abstract class ClientAbstractDataAPI
     {
         private ObservableCollection<BoatDTO> _boats = new();
         private readonly ClientWebSocketAPI _clientWebSocket;
+        private int _actualTime;
         public ClientDataAPI()
         {
             _clientWebSocket = new ClientWebSocketAPI();
@@ -62,13 +68,22 @@ public abstract class ClientAbstractDataAPI
                 var root = doc.RootElement;
                 string type = root.GetProperty("type").GetString();
 
-                if (type == "boats")
+                if (type == "boatsListUpdate")
                 {
                     var boatsJson = root.GetProperty("boats").ToString();
                     var boats = JsonSerializer.Deserialize<List<BoatDTO>>(boatsJson);
 
                     if (boats is not null)
-                        UpdateBoats(boats);
+                    {
+                        UpdateBoats(boats);       
+                    }
+                }
+
+                if (type == "timeUpdate")
+                {
+                    var timeJson = root.GetProperty("time").ToString();
+                    var time = JsonSerializer.Deserialize<int>(timeJson);
+                    actualTimeSubject.OnNext(time);
                 }
             }
             catch (Exception ex)
