@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace ClientData;
 
-public class WebSocketClientAPI
+public class ClientWebSocketAPI
 {
     private ClientWebSocket _socket = new();
 
@@ -27,7 +27,7 @@ public class WebSocketClientAPI
         string json = JsonSerializer.Serialize(message);
         var buffer = Encoding.UTF8.GetBytes(json);
         await _socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
-        Console.WriteLine($"📤 Wysłano: {json}");
+        Console.WriteLine($"Wysłano: {json}");
     }
 
     // Event, na który inne klasy będą subskrybować, by odebrać surowe dane
@@ -40,7 +40,7 @@ public class WebSocketClientAPI
         {
             var result = await _socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             string response = Encoding.UTF8.GetString(buffer, 0, result.Count);
-            Console.WriteLine($"📨 Odebrano: {response}");
+            Console.WriteLine($"Odebrano: {response}");
 
             // Wywołanie eventu po odebraniu surowych danych
             OnRawMessageReceived?.Invoke(response);

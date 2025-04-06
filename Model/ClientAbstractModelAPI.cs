@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using ClientLogic;
-using Logic;
+
 namespace Model
 {
     public abstract class ClientAbstractModelAPI
@@ -10,7 +10,7 @@ namespace Model
         
         private ObservableCollection<IModelBoat> modelBoats = new ObservableCollection<IModelBoat>();
         
-        public static ClientAbstractModelAPI createInstance(AbstractServerLogicAPI abstractServerLogicApi = default)
+        public static ClientAbstractModelAPI createInstance()
         {
             return new ModelAPI();
         }

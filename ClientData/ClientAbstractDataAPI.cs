@@ -18,13 +18,13 @@ public abstract class ClientAbstractDataAPI
     private class ClientDataAPI : ClientAbstractDataAPI
     {
         private ObservableCollection<BoatDTO> _boats = new();
-        private readonly WebSocketClientAPI _webSocket;
+        private readonly ClientWebSocketAPI _clientWebSocket;
         public ClientDataAPI()
         {
-            _webSocket = new WebSocketClientAPI();
-            _webSocket.OnRawMessageReceived += HandleMessage;
+            _clientWebSocket = new ClientWebSocketAPI();
+            _clientWebSocket.OnRawMessageReceived += HandleMessage;
             
-            _ = _webSocket.ConnectAsync();
+            _ = _clientWebSocket.ConnectAsync();
         }
 
         private void UpdateBoats(List<BoatDTO> boatsFromServer)
@@ -46,7 +46,7 @@ public abstract class ClientAbstractDataAPI
 
         public override void BuyBoatById(int id)
         {
-            _webSocket.SendBuyBoatMessageAsync(id);
+            _clientWebSocket.SendBuyBoatMessageAsync(id);
             var boat = GetBoatById(id);
             if (boat != null)
             {
@@ -56,7 +56,6 @@ public abstract class ClientAbstractDataAPI
         
         private void HandleMessage(string json)
         {
-            Console.WriteLine(json);
             try
             {
                 using var doc = JsonDocument.Parse(json);

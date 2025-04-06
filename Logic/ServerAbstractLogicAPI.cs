@@ -5,11 +5,11 @@ using Timer = System.Timers.Timer;
 
 namespace Logic
 {
-    public abstract class AbstractServerLogicAPI
+    public abstract class ServerAbstractLogicAPI
     {
-        public static AbstractServerLogicAPI createInstance(ServerAbstractDataAPI? dataAPI = null)
+        public static ServerAbstractLogicAPI createInstance(ServerAbstractDataAPI? dataAPI = null)
         {
-            return new ServerLogicAPI(dataAPI ?? ServerAbstractDataAPI.createInstance());
+            return new LogicApi(dataAPI ?? ServerAbstractDataAPI.createInstance());
         }
 
         public abstract ObservableCollection<IBoat> GetAllBoats();
@@ -20,15 +20,14 @@ namespace Logic
 
         private static Timer timer;
         private static int secondsElapsed = 0;
-        private class ServerLogicAPI : AbstractServerLogicAPI
+        private class LogicApi : ServerAbstractLogicAPI
         {
             private readonly ServerAbstractDataAPI myDataAPI;
             private int IdCounter = 1;
             private Object padlock = new object();
             public override event Action OnTimePassed;
-
-
-            public ServerLogicAPI(ServerAbstractDataAPI? dataAPI)
+            
+            public LogicApi(ServerAbstractDataAPI? dataAPI)
             {
                 myDataAPI = dataAPI;
                 IdCounter = dataAPI.GetAllBoats().Count + 1;
@@ -59,8 +58,8 @@ namespace Logic
                     {
                         return false;
                     }
-
                     myDataAPI.RemoveBoat(id);
+                    Console.WriteLine("    ");
                     return true;
                 }
             }

@@ -4,7 +4,7 @@
     {
         public static async Task Main(string[] args)
         {
-            var server = new WebSocketServerAPI();
+            var server = new ServerWebSocketAPI();
             await server.StartAsync();
             
         }
