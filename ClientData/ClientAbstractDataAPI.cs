@@ -12,7 +12,6 @@ public abstract class ClientAbstractDataAPI
     }
     
     public abstract ObservableCollection<BoatDTO> GetAllBoats();
-    public abstract BoatDTO? GetBoatById(int id);
     
     private Subject<int> actualTimeSubject = new Subject<int>();
     public IObservable<int> actualTime => actualTimeSubject.AsObservable();
@@ -43,7 +42,7 @@ public abstract class ClientAbstractDataAPI
             return _boats;
         }
 
-        public override BoatDTO? GetBoatById(int id)
+        public BoatDTO? GetBoatById(int id)
         {
             return _boats.FirstOrDefault(b => b.Id == id);
         }

@@ -3,7 +3,7 @@
 namespace Tests
 {
     [TestClass]
-    public sealed class DataTests
+    public sealed class ServerDataTests
     {
         private ServerAbstractDataAPI dataAPI;
 

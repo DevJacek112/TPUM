@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -13,13 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Data\ServerData.csproj" />
-    <ProjectReference Include="..\Logic\ServerLogic.csproj" />
-    <ProjectReference Include="..\ServerModel\ServerModel.csproj" />
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+    <ProjectReference Include="..\ClientData\ClientData.csproj" />
+    <ProjectReference Include="..\ClientLogic\ClientLogic.csproj" />
   </ItemGroup>
 
 </Project>

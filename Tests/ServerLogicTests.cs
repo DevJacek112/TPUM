@@ -4,7 +4,7 @@ using Data;
 namespace Tests
 {
     [TestClass]
-    public sealed class LogicTests
+    public sealed class ServerLogicTests
     {
         private ServerAbstractLogicAPI logicAPI;
         private ServerAbstractDataAPI dataAPI;
