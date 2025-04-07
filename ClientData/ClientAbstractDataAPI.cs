@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Reactive.Linq;
-using System.Text.Json;
 using System.Reactive.Subjects;
 
 namespace ClientData;
@@ -22,9 +21,8 @@ public abstract class ClientAbstractDataAPI
 
     private class ClientDataAPI : ClientAbstractDataAPI
     {
-        private ObservableCollection<BoatDTO> _boats = new();
+        private readonly ObservableCollection<BoatDTO> _boats = new();
         private readonly ClientWebSocketAPI _clientWebSocket;
-        private int _actualTime;
         public ClientDataAPI()
         {
             _clientWebSocket = new ClientWebSocketAPI();
@@ -52,7 +50,7 @@ public abstract class ClientAbstractDataAPI
 
         public override void BuyBoatById(int id)
         {
-            _clientWebSocket.SendBuyBoatMessageAsync(id);
+            SendBuyBoatMessageAsync(id);
             var boat = GetBoatById(id);
             if (boat != null)
             {
@@ -60,37 +58,38 @@ public abstract class ClientAbstractDataAPI
             }
         }
         
+        private void SendBuyBoatMessageAsync(int boatId)
+        {
+            var json = JSONManager.Serialize("buy", boatId);
+            _ = _clientWebSocket.SendRawJsonAsync(json);
+        }
+        
         private void HandleMessage(string json)
         {
             try
             {
-                using var doc = JsonDocument.Parse(json);
-                var root = doc.RootElement;
-                string type = root.GetProperty("type").GetString();
+                var message = JSONManager.DeserializeRawMessage(json);
 
-                if (type == "boatsListUpdate")
+                if (message?.Type == "boatsListUpdated")
                 {
-                    var boatsJson = root.GetProperty("boats").ToString();
-                    var boats = JsonSerializer.Deserialize<List<BoatDTO>>(boatsJson);
-
+                    var boats = JSONManager.DeserializePayload<List<BoatDTO>>(message.Message);
                     if (boats is not null)
                     {
-                        UpdateBoats(boats);       
+                        UpdateBoats(boats);
                     }
                 }
-
-                if (type == "timeUpdate")
+                else if (message?.Type == "timeUpdated")
                 {
-                    var timeJson = root.GetProperty("time").ToString();
-                    var time = JsonSerializer.Deserialize<int>(timeJson);
+                    var time = JSONManager.DeserializePayload<int>(message.Message);
                     actualTimeSubject.OnNext(time);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Błąd przy analizie wiadomości: {ex.Message}");
+                Console.WriteLine($"Error with message: {ex.Message}");
             }
         }
+
     }
 
 }

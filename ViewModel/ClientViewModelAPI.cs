@@ -5,7 +5,7 @@ using Model;
 
 namespace ViewModel;
 
-public class ViewModelAPI : INotifyPropertyChanged
+public class ClientViewModelAPI : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
     public CommandBuyBoat BuyBoatCom { get; }
@@ -25,7 +25,7 @@ public class ViewModelAPI : INotifyPropertyChanged
         }
     }
     
-    public ViewModelAPI()
+    public ClientViewModelAPI()
     {
         modelAPI = ClientAbstractModelAPI.createInstance();
         BuyBoatCom = new CommandBuyBoat(modelAPI);
@@ -43,7 +43,7 @@ public class ViewModelAPI : INotifyPropertyChanged
         ActualTime = time;
     }
 
-    protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    private void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

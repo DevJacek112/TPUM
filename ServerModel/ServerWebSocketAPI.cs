@@ -13,7 +13,7 @@ public class ServerWebSocketAPI
     public ServerWebSocketAPI()
     {
         _httpListener = new HttpListener();
-        _httpListener.Prefixes.Add("http://localhost:5000/ws/");
+        _httpListener.Prefixes.Add("http://localhost:7312/ws/");
         _serverAbstractModel = ServerAbstractModelAPI.createInstance();
         
         //boat list update
@@ -32,7 +32,6 @@ public class ServerWebSocketAPI
     public async Task StartAsync()
     {
         _httpListener.Start();
-        Console.WriteLine("Serwer nasłuchuje na ws://localhost:5000/ws");
 
         while (true)
         {
@@ -66,7 +65,7 @@ public class ServerWebSocketAPI
         }
     }
 
-    public async Task SendRawJsonAsync(string json)
+    private async Task SendRawJsonAsync(string json)
     {
         if (_connectedSocket != null && _connectedSocket.State == WebSocketState.Open)
         {

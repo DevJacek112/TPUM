@@ -6,7 +6,6 @@
         {
             ClientWebSocketAPI client = new();
             await client.ConnectAsync();
-            await client.SendBuyBoatMessageAsync(1);
         }
     }
 }

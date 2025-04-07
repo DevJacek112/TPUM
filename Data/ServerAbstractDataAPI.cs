@@ -17,12 +17,10 @@ namespace Data
         private class ServerDataAPI : ServerAbstractDataAPI
         {
             private readonly BoatRepository boats;
-            private readonly IUser user;
 
             public ServerDataAPI()
             {
                 boats = new BoatRepository();
-                user = new User("Uzytkownik1", 150.0f);
             }
 
             public override ObservableCollection<IBoat> GetAllBoats()

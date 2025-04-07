@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Logic;
+﻿using Logic;
 
 namespace ServerModel;
 
@@ -41,54 +40,26 @@ public abstract class ServerAbstractModelAPI
         
         public override void DeserializeString(string json)
         {
-            try
-            {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                };
-                var message = JsonSerializer.Deserialize<BuyBoatMessage>(json, options);
+            var message = JSONManager.DeserializeRawMessage(json);
 
-                if (message?.Type == "buy")
-                {
-                    myLogicAPI.buyBoat(message.Id);
-                }
-            }
-            catch (Exception e)
+            if (message?.Type == "buy")
             {
-                Console.WriteLine($"Can't deserialize: {e.Message}");
-            }   
-        }
-        
-        private class BuyBoatMessage
-        {
-            public string Type { get; set; } = "";
-            public int Id { get; set; }
+                var id = JSONManager.DeserializePayload<int>(message.Message);
+                myLogicAPI.buyBoat(id);
+            }
         }
 
         private void PrepareAndSendTimePassed(int actualTime)
         {
-            Console.WriteLine(actualTime);
-            var message = new
-            {
-                type = "timeUpdate",
-                time = actualTime
-            };
-
-            string json = JsonSerializer.Serialize(message);
+            string json = JSONManager.Serialize("timeUpdated", actualTime);
             OnTimePassed?.Invoke(json);
         }
 
-        public void PrepareAndSendBoatsList()
+        private void PrepareAndSendBoatsList()
         {
             var boats = GetBoatsFromDatabase();
-            var message = new
-            {
-                type = "boatsListUpdate",
-                boats = boats
-            };
 
-            string json = JsonSerializer.Serialize(message);
+            string json = JSONManager.Serialize("boatsListUpdated", boats);
             OnBoatsListReady?.Invoke(json);
         }
 

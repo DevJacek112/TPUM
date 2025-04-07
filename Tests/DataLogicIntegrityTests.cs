@@ -11,14 +11,14 @@ namespace Tests
     [TestClass]
     public sealed class DataLogicIntegrityTests
     {
-        private ServerLogicAPI logicAPI;
+        private ServerAbstractLogicAPI logicAPI;
         private ServerAbstractDataAPI dataAPI;
 
         [TestInitialize]
         public void Setup()
         {
             dataAPI = ServerAbstractDataAPI.createInstance();
-            logicAPI = ServerLogicAPI.createInstance(dataAPI);
+            logicAPI = ServerAbstractLogicAPI.createInstance(dataAPI);
         }
 
         [TestMethod]

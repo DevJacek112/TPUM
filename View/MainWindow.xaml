@@ -15,7 +15,7 @@
 
 
     <Window.DataContext>
-        <viewModel:ViewModelAPI />
+        <viewModel:ClientViewModelAPI />
     </Window.DataContext>
 
     <Grid>

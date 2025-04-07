@@ -7,32 +7,19 @@ namespace ClientData;
 public class ClientWebSocketAPI
 {
     private ClientWebSocket _socket = new();
-
+    public event Action<string>? OnRawMessageReceived;
+    
     public async Task ConnectAsync()
     {
-        await _socket.ConnectAsync(new Uri("ws://localhost:5000/ws"), CancellationToken.None);
-        Console.WriteLine("✅ Połączono z serwerem WebSocket");
-
+        await _socket.ConnectAsync(new Uri("ws://localhost:7312/ws"), CancellationToken.None);
         _ = ListenAsync();
     }
 
-    public async Task SendBuyBoatMessageAsync(int boatId)
+    public async Task SendRawJsonAsync(string json)
     {
-        var message = new
-        {
-            type = "buy",
-            id = boatId
-        };
-
-        string json = JsonSerializer.Serialize(message);
-        var buffer = Encoding.UTF8.GetBytes(json);
-        await _socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
-        Console.WriteLine($"Wysłano: {json}");
+        await _socket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(json)), WebSocketMessageType.Text, true, CancellationToken.None);
     }
-
-    // Event, na który inne klasy będą subskrybować, by odebrać surowe dane
-    public event Action<string>? OnRawMessageReceived;
-
+    
     private async Task ListenAsync()
     {
         var buffer = new byte[1024];
@@ -40,9 +27,6 @@ public class ClientWebSocketAPI
         {
             var result = await _socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             string response = Encoding.UTF8.GetString(buffer, 0, result.Count);
-            Console.WriteLine($"Odebrano: {response}");
-
-            // Wywołanie eventu po odebraniu surowych danych
             OnRawMessageReceived?.Invoke(response);
         }
     }

@@ -62,7 +62,6 @@ namespace Logic
                         return false;
                     }
                     myDataAPI.RemoveBoat(id);
-                    Console.WriteLine("    ");
                     return true;
                 }
             }

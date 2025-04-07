@@ -12,9 +12,9 @@ namespace Model
         
         private ObservableCollection<IModelBoat> modelBoats = new ObservableCollection<IModelBoat>();
         
-        public static ClientAbstractModelAPI createInstance()
+        public static ClientAbstractModelAPI createInstance(ClientAbstractLogicAPI? logicApi = null)
         {
-            return new ModelAPI();
+            return new ModelAPI (logicApi ?? ClientAbstractLogicAPI.createInstance());
         }
         
         private Subject<int> actualTimeSubject = new Subject<int>();
@@ -22,15 +22,11 @@ namespace Model
         
         public abstract void BuyBoat(int id);
         
-        //public abstract event Action OnTimePassedModel;
-        
         private class ModelAPI : ClientAbstractModelAPI
         {
-            public ModelAPI()
+            public ModelAPI(ClientAbstractLogicAPI? logicApi)
             {
                 logicAPI = ClientAbstractLogicAPI.createInstance();
-                //logicAPI.StartTimer();
-                //logicAPI.OnTimePassed += UpdateTimer;
                 logicAPI.GetAllBoats().CollectionChanged += CollectionUpdated;
                 LoadAllBoats();
                 
@@ -52,11 +48,6 @@ namespace Model
             {
                 LoadAllBoats();
             }
-            
-            /*public void UpdateTimer()
-            {
-                OnTimePassedModel?.Invoke();
-            }*/
 
             private void LoadAllBoats()
             {
@@ -72,8 +63,6 @@ namespace Model
             {
                 logicAPI.buyBoat(id);
             }
-
-            //public override event Action OnTimePassedModel;
         }
 
     }

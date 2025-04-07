@@ -6,14 +6,14 @@ namespace Tests
     [TestClass]
     public sealed class LogicTests
     {
-        private ServerLogicAPI logicAPI;
+        private ServerAbstractLogicAPI logicAPI;
         private ServerAbstractDataAPI dataAPI;
 
         [TestInitialize]
         public void Setup()
         {
             dataAPI = ServerAbstractDataAPI.createInstance();
-            logicAPI = ServerLogicAPI.createInstance();
+            logicAPI = ServerAbstractLogicAPI.createInstance();
         }
 
         [TestMethod]
