@@ -1,6 +1,5 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
-using System.Text.Json;
 
 namespace ClientData;
 
@@ -11,8 +10,21 @@ public class ClientWebSocketAPI
     
     public async Task ConnectAsync()
     {
-        await _socket.ConnectAsync(new Uri("ws://localhost:7312/ws"), CancellationToken.None);
-        _ = ListenAsync();
+        while (_socket.State != WebSocketState.Open)
+        {
+            _socket = new ClientWebSocket();
+            try
+            {
+                await _socket.ConnectAsync(new Uri("ws://localhost:7312/ws"), CancellationToken.None);
+                _ = ListenAsync();
+                break;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Trying to connect...");
+                await Task.Delay(5000, CancellationToken.None);
+            }
+        }
     }
 
     public async Task SendRawJsonAsync(string json)

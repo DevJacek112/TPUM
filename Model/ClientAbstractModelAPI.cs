@@ -26,11 +26,11 @@ namespace Model
         {
             public ModelAPI(ClientAbstractLogicAPI? logicApi)
             {
-                logicAPI = ClientAbstractLogicAPI.createInstance();
-                logicAPI.GetAllBoats().CollectionChanged += CollectionUpdated;
+                myLogicAPI = logicApi;
+                myLogicAPI.GetAllBoats().CollectionChanged += CollectionUpdated;
                 LoadAllBoats();
                 
-                logicAPI.actualTime.Subscribe(
+                myLogicAPI.actualTime.Subscribe(
                     x =>actualTimeSubject.OnNext(x),  // onNext
                     ex => Console.WriteLine($"Error: {ex.Message}"),         // onError
                     () => Console.WriteLine("End of streaming.")           // onCompleted
@@ -42,7 +42,7 @@ namespace Model
                 return modelBoats;
             }
             
-            private ClientAbstractLogicAPI logicAPI;
+            private ClientAbstractLogicAPI myLogicAPI;
 
             private void CollectionUpdated(object? sender, NotifyCollectionChangedEventArgs e)
             {
@@ -52,7 +52,7 @@ namespace Model
             private void LoadAllBoats()
             {
                 modelBoats.Clear();
-                var logicBoats = logicAPI.GetAllBoats();
+                var logicBoats = myLogicAPI.GetAllBoats();
                 foreach (var boat in logicBoats)
                 {
                     modelBoats.Add(new ModelBoat(boat.Id, boat.Name, boat.Description, boat.Price));
@@ -61,7 +61,7 @@ namespace Model
 
             public override void BuyBoat(int id)
             {
-                logicAPI.buyBoat(id);
+                myLogicAPI.buyBoat(id);
             }
         }
 
