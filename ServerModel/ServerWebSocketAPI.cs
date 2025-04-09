@@ -9,7 +9,8 @@ public class ServerWebSocketAPI
 {
     private readonly HttpListener _httpListener;
     private readonly ServerAbstractModelAPI _serverAbstractModel;
-    private WebSocket _connectedSocket;
+    private readonly List<WebSocket> _connectedSockets = new();
+    private readonly object _lock = new();
     public ServerWebSocketAPI()
     {
         _httpListener = new HttpListener();
@@ -41,7 +42,10 @@ public class ServerWebSocketAPI
             {
                 var wsContext = await context.AcceptWebSocketAsync(null);
                 _ = HandleConnectionAsync(wsContext.WebSocket);
-                _connectedSocket = wsContext.WebSocket;
+                lock (_lock)
+                {
+                    _connectedSockets.Add(wsContext.WebSocket);
+                }
                 _serverAbstractModel.OnClientConnected();
             }
             else
@@ -67,11 +71,30 @@ public class ServerWebSocketAPI
 
     private async Task SendRawJsonAsync(string json)
     {
-        if (_connectedSocket != null && _connectedSocket.State == WebSocketState.Open)
+        byte[] buffer = Encoding.UTF8.GetBytes(json);
+        var segment = new ArraySegment<byte>(buffer);
+
+        List<WebSocket> disconnected = new();
+
+        lock (_lock)
         {
-            var buffer = Encoding.UTF8.GetBytes(json);
-            var segment = new ArraySegment<byte>(buffer);
-            await _connectedSocket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+            foreach (var socket in _connectedSockets)
+            {
+                if (socket.State == WebSocketState.Open)
+                {
+                    _ = socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+                }
+                else
+                {
+                    disconnected.Add(socket);
+                }
+            }
+            
+            foreach (var sock in disconnected)
+            {
+                _connectedSockets.Remove(sock);
+            }
         }
     }
+
 }

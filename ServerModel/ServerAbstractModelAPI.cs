@@ -46,6 +46,7 @@ public abstract class ServerAbstractModelAPI
             {
                 var id = JSONManager.DeserializePayload<int>(message.Message);
                 myLogicAPI.buyBoat(id);
+                PrepareAndSendBoatsList();
             }
         }
 

@@ -42,19 +42,9 @@ public abstract class ClientAbstractDataAPI
             return _boats;
         }
 
-        public BoatDTO? GetBoatById(int id)
-        {
-            return _boats.FirstOrDefault(b => b.Id == id);
-        }
-
         public override void BuyBoatById(int id)
         {
             SendBuyBoatMessageAsync(id);
-            var boat = GetBoatById(id);
-            if (boat != null)
-            {
-                _boats.Remove(boat);
-            }
         }
         
         private void SendBuyBoatMessageAsync(int boatId)
