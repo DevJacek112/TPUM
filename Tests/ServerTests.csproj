@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Data\ServerData.csproj" />
-    <ProjectReference Include="..\Logic\ServerLogic.csproj" />
+    <ProjectReference Include="..\ServerData\ServerData.csproj" />
+    <ProjectReference Include="..\ServerLogic\ServerLogic.csproj" />
     <ProjectReference Include="..\ServerModel\ServerModel.csproj" />
   </ItemGroup>
 
