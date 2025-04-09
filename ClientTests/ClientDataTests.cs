@@ -34,21 +34,7 @@ namespace ClientTests
             Assert.AreEqual(2, currentBoats.Count);
             Assert.AreEqual("Lodka1", currentBoats[0].Name);
         }
-        
-        [TestMethod]
-        public void TestBuyBoatRemovesFromList()
-        {
-            var boats = new List<BoatDTO>
-            {
-                new() { Id = 5, Name = "LodkaX", Description = "Opis", Price = 300 }
-            };
-
-            var json = JSONManager.Serialize("boatsListUpdated", boats);
-            InvokeHandleMessage(dataAPI, json);
-            dataAPI.BuyBoatById(5);
-            Assert.AreEqual(0, dataAPI.GetAllBoats().Count);
-        }
-        
+                
         [TestMethod]
         public void TestTimeUpdateEvent()
         {

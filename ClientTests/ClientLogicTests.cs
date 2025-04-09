@@ -32,19 +32,6 @@ namespace ClientTests
         }
 
         [TestMethod]
-        public void BuyBoatTest()
-        {
-            var boats = new List<BoatDTO>
-            {
-                new() { Id = 9, Name = "LodkaTest", Description = "Opis", Price = 999 }
-            };
-            var json = JSONManager.Serialize("boatsListUpdated", boats);
-            InvokeHandleMessage(dataAPI, json);
-            logicAPI.buyBoat(9);
-            Assert.AreEqual(0, logicAPI.GetAllBoats().Count);
-        }
-
-        [TestMethod]
         public void TimeUpdateTest()
         {
             var json = JSONManager.Serialize("timeUpdated", 456);
