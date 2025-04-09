@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ViewModel\ClientViewModel.csproj" />
+    <ProjectReference Include="..\ClientViewModel\ClientViewModel.csproj" />
   </ItemGroup>
 
 </Project>
