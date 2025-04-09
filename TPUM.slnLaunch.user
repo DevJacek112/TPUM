@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Client and Server",
+    "Projects": [
+      {
+        "Path": "ClientView\\ClientView.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "ServerModel\\ServerModel.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
