@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.WebSockets;
 using System.Text;
-using System.Text.Json;
 
 namespace ServerModel;
 
@@ -18,15 +17,15 @@ public class ServerWebSocketAPI
         _serverAbstractModel = ServerAbstractModelAPI.createInstance();
         
         //boat list update
-        _serverAbstractModel.OnBoatsListReady += async (json) =>
+        _serverAbstractModel.OnBoatsListReady += async (socket, json) =>
         {
-            await SendRawJsonAsync(json);
+            await SendRawJsonAsync(socket, json);
         };
         
         //time passed
-        _serverAbstractModel.OnTimePassed += async (json) =>
+        _serverAbstractModel.OnTimePassed += (json) =>
         {
-            await SendRawJsonAsync(json);
+            SendToAll(json);
         };
     }
 
@@ -46,7 +45,7 @@ public class ServerWebSocketAPI
                 {
                     _connectedSockets.Add(wsContext.WebSocket);
                 }
-                _serverAbstractModel.OnClientConnected();
+                _serverAbstractModel.OnClientConnected(wsContext.WebSocket);
             }
             else
             {
@@ -65,35 +64,34 @@ public class ServerWebSocketAPI
             var result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             var json = Encoding.UTF8.GetString(buffer, 0, result.Count);
             
-            _serverAbstractModel.DeserializeString(json);
+            _serverAbstractModel.DeserializeString(socket, json);
+            
+            Console.WriteLine(json);
         }
     }
 
-    private async Task SendRawJsonAsync(string json)
+    private async Task SendRawJsonAsync(WebSocket specificSocket, string json)
     {
         byte[] buffer = Encoding.UTF8.GetBytes(json);
         var segment = new ArraySegment<byte>(buffer);
-
-        List<WebSocket> disconnected = new();
-
+        
         lock (_lock)
         {
             foreach (var socket in _connectedSockets)
             {
-                if (socket.State == WebSocketState.Open)
+                if (socket.State == WebSocketState.Open && socket == specificSocket)
                 {
                     _ = socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
                 }
-                else
-                {
-                    disconnected.Add(socket);
-                }
             }
-            
-            foreach (var sock in disconnected)
-            {
-                _connectedSockets.Remove(sock);
-            }
+        }
+    }
+
+    private async void SendToAll(string json)
+    {
+        foreach (var socket in _connectedSockets)
+        {
+            await SendRawJsonAsync(socket, json);
         }
     }
 

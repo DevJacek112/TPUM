@@ -22,6 +22,8 @@ namespace Model
         
         public abstract void BuyBoat(int id);
         
+        public abstract void SetPriceFilter(float minPrice, float maxPrice);
+        
         private class ModelAPI : ClientAbstractModelAPI
         {
             public ModelAPI(ClientAbstractLogicAPI? logicApi)
@@ -61,7 +63,12 @@ namespace Model
 
             public override void BuyBoat(int id)
             {
-                myLogicAPI.buyBoat(id);
+                myLogicAPI.BuyBoat(id);
+            }
+
+            public override void SetPriceFilter(float minPrice, float maxPrice)
+            {
+                myLogicAPI.SetPriceFilter(minPrice, maxPrice);
             }
         }
 

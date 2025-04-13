@@ -9,11 +9,15 @@ public class ClientViewModelAPI : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
     public CommandBuyBoat BuyBoatCom { get; }
+    public CommandSetPriceFilter SetPriceFilterCom { get; }
     
     public ObservableCollection<IModelBoat> ModelBoats => modelAPI.GetModelBoats();
     
     private ClientAbstractModelAPI modelAPI;
     private int actualTime;
+    
+    public int MinPrice { get; set; }
+    public int MaxPrice { get; set; }
 
     public int ActualTime
     {
@@ -29,7 +33,7 @@ public class ClientViewModelAPI : INotifyPropertyChanged
     {
         modelAPI = ClientAbstractModelAPI.createInstance();
         BuyBoatCom = new CommandBuyBoat(modelAPI);
-        ActualTime = 0;
+        SetPriceFilterCom = new CommandSetPriceFilter(modelAPI, this);
         
         modelAPI.actualTime.Subscribe(
             x =>UpdateGUITimer(x),  // onNext

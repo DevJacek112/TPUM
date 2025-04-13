@@ -17,6 +17,7 @@ public abstract class ClientAbstractDataAPI
     public IObservable<int> actualTime => actualTimeSubject.AsObservable();
 
     public abstract void BuyBoatById(int id);
+    public abstract void SetPriceFilter(float minPrice, float maxPrice);
 
     private class ClientDataAPI : ClientAbstractDataAPI
     {
@@ -46,11 +47,24 @@ public abstract class ClientAbstractDataAPI
         {
             SendBuyBoatMessageAsync(id);
         }
-        
+
+        public override void SetPriceFilter(float minPrice, float maxPrice)
+        {
+            SendSetFilterMessageAsync(minPrice, maxPrice);
+        }
+
         private void SendBuyBoatMessageAsync(int boatId)
         {
             var json = JSONManager.Serialize("buy", boatId);
             _ = _clientWebSocket.SendRawJsonAsync(json);
+        }
+        
+        private void SendSetFilterMessageAsync(float minPrice, float maxPrice)
+        {
+            var filters = new PriceFilterDTO{MinPrice = minPrice, MaxPrice = maxPrice};
+            var json = JSONManager.Serialize("priceFilter", filters);
+            _ = _clientWebSocket.SendRawJsonAsync(json);
+            Console.WriteLine(json);
         }
         
         private void HandleMessage(string json)

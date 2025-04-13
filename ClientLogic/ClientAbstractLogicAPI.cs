@@ -15,7 +15,9 @@ using ClientData;
         }
         
         public abstract ObservableCollection<BoatDTO> GetAllBoats();
-        public abstract void buyBoat(int id);
+        public abstract void BuyBoat(int id);
+        
+        public abstract void SetPriceFilter(float minPrice, float maxPrice);
         
         private Subject<int> actualTimeSubject = new Subject<int>();
         public IObservable<int> actualTime => actualTimeSubject.AsObservable();
@@ -39,9 +41,14 @@ using ClientData;
                 return myDataAPI.GetAllBoats();
             }
 
-            public override void buyBoat(int id)
+            public override void BuyBoat(int id)
             {
                 myDataAPI.BuyBoatById(id);
+            }
+
+            public override void SetPriceFilter(float minPrice, float maxPrice)
+            {
+                myDataAPI.SetPriceFilter(minPrice, maxPrice);
             }
         }
 

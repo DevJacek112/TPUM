@@ -1,4 +1,5 @@
-﻿using Logic;
+﻿using System.Net.WebSockets;
+using Logic;
 
 namespace ServerModel;
 
@@ -11,34 +12,39 @@ public abstract class ServerAbstractModelAPI
 
     private readonly ServerAbstractLogicAPI logicAPI;
     
-    public abstract void DeserializeString(string json);
+    public abstract void DeserializeString(WebSocket specificSocket, string json);
     
-    public event Action<string>? OnBoatsListReady;
+    public event Action<WebSocket, string>? OnBoatsListReady;
     public event Action<string>? OnTimePassed;
     
-    public abstract void OnClientConnected();
+    public abstract void OnClientConnected(WebSocket webSocket);
     
     private class ServerModelAPI : ServerAbstractModelAPI
     {
         private readonly ServerAbstractLogicAPI myLogicAPI;
-            
-        public override void OnClientConnected()
-        {
-            PrepareAndSendBoatsList();
-        }
-        
+
+        private List<ClientInfo> clients;
+        PriceFilterDTO defaultPriceFilter;
         public ServerModelAPI(ServerAbstractLogicAPI? logicAPI)
         {
             myLogicAPI = logicAPI;
-            
+            defaultPriceFilter = new PriceFilterDTO();
             myLogicAPI.actualTime.Subscribe(
                 x =>PrepareAndSendTimePassed(x),  // onNext
                 ex => Console.WriteLine($"Error: {ex.Message}"),         // onError
                 () => Console.WriteLine("End of streaming.")           // onCompleted
             );
+            
+            clients = new List<ClientInfo>();
         }
         
-        public override void DeserializeString(string json)
+        public override void OnClientConnected(WebSocket webSocket)
+        {
+            clients.Add(new ClientInfo(webSocket, defaultPriceFilter));
+            PrepareAndSendBoatsList(webSocket);
+        }
+        
+        public override void DeserializeString(WebSocket specificSocket, string json)
         {
             var message = JSONManager.DeserializeRawMessage(json);
 
@@ -46,7 +52,24 @@ public abstract class ServerAbstractModelAPI
             {
                 var id = JSONManager.DeserializePayload<int>(message.Message);
                 myLogicAPI.buyBoat(id);
-                PrepareAndSendBoatsList();
+                foreach (var client in clients)
+                {
+                    PrepareAndSendBoatsList(client.webSocket);
+                }
+            }
+            
+            else if (message?.Type == "priceFilter")
+            {
+                var priceFilter = JSONManager.DeserializePayload<PriceFilterDTO>(message.Message);
+
+                foreach (var client in clients)
+                {
+                    if (client.webSocket == specificSocket)
+                    {
+                        client.filter = priceFilter;
+                        PrepareAndSendBoatsList(specificSocket);
+                    }
+                }
             }
         }
 
@@ -56,23 +79,33 @@ public abstract class ServerAbstractModelAPI
             OnTimePassed?.Invoke(json);
         }
 
-        private void PrepareAndSendBoatsList()
+        private void PrepareAndSendBoatsList(WebSocket socket)
         {
-            var boats = GetBoatsFromDatabase();
-
-            string json = JSONManager.Serialize("boatsListUpdated", boats);
-            OnBoatsListReady?.Invoke(json);
+            foreach (var client in clients)
+            {
+                if (client.webSocket == socket)
+                {
+                    var boats = GetBoatsFromDatabase(client.filter);
+                    string json = JSONManager.Serialize("boatsListUpdated", boats);
+                    OnBoatsListReady?.Invoke(socket, json);
+                }
+            }
         }
 
-        private List<BoatDTO> GetBoatsFromDatabase()
+        private List<BoatDTO> GetBoatsFromDatabase(PriceFilterDTO filter)
         {
             var boats = myLogicAPI.GetAllBoats();
             List <BoatDTO> boatsDTO = new List<BoatDTO>();
             
             foreach (var boat in boats)
             {
-                var newBoat = new BoatDTO { Id = boat.Id, Name = boat.Name, Description = boat.Description, Price = boat.Price };
-                boatsDTO.Add(newBoat);
+                if (boat.Price >= filter.MinPrice && boat.Price <= filter.MaxPrice)
+                {
+                    //Console.WriteLine("dodaje lodz o cenie " + boat.Price);
+                    Console.WriteLine(filter.MinPrice);
+                    var newBoat = new BoatDTO { Id = boat.Id, Name = boat.Name, Description = boat.Description, Price = boat.Price };
+                    boatsDTO.Add(newBoat);
+                }
             }
             
             return boatsDTO;

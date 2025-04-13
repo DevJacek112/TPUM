@@ -19,7 +19,6 @@ namespace ViewModel
         {
             if (parameter is IModelBoat boat)
             {
-                //Console.WriteLine($"executed, buying boat {boat.Id}");
                 modelAPI.BuyBoat(boat.Id);
             }
             else
