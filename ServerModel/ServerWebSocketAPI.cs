@@ -57,19 +57,47 @@ public class ServerWebSocketAPI
 
     private async Task HandleConnectionAsync(WebSocket socket)
     {
-        var buffer = new byte[1024];
+        var buffer = new byte[1024 * 4];
 
-        while (socket.State == WebSocketState.Open)
+        try
         {
-            var result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            var json = Encoding.UTF8.GetString(buffer, 0, result.Count);
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+
+                if (result.MessageType == WebSocketMessageType.Close)
+                    break;
+                
+                var json = Encoding.UTF8.GetString(buffer, 0, result.Count);
             
-            _serverAbstractModel.DeserializeString(socket, json);
+                _serverAbstractModel.DeserializeString(socket, json);
             
-            Console.WriteLine(json);
+                Console.WriteLine(json);
+            }
+        }
+        catch
+        {
+            //error occured, client is not connected anymore
+        }
+
+        finally
+        {
+            lock (_lock)
+            {
+                _connectedSockets.Remove(socket);
+            }
+
+            _serverAbstractModel.OnClientDisconnected(socket);
+
+            if (socket.State == WebSocketState.Open || socket.State == WebSocketState.CloseReceived)
+            {
+                await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
+            }
+            
+            socket.Dispose();
         }
     }
-
+    
     private async Task SendRawJsonAsync(WebSocket specificSocket, string json)
     {
         byte[] buffer = Encoding.UTF8.GetBytes(json);

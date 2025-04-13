@@ -20,9 +20,16 @@ namespace Model
         private Subject<int> actualTimeSubject = new Subject<int>();
         public IObservable<int> actualTime => actualTimeSubject.AsObservable();
         
+        private Subject<int> actualBoatCountSubject = new Subject<int>();
+        public IObservable<int> actualBoatCount => actualBoatCountSubject.AsObservable();
+        
+        private Subject<int> actualClientsCountSubject = new Subject<int>();
+        public IObservable<int> actualClientsCount => actualClientsCountSubject.AsObservable();
+        
         public abstract void BuyBoat(int id);
         
         public abstract void SetPriceFilter(float minPrice, float maxPrice);
+        public abstract void SetSubsciptions(bool serverTime, bool boatsCount, bool clientsCount);
         
         private class ModelAPI : ClientAbstractModelAPI
         {
@@ -34,6 +41,18 @@ namespace Model
                 
                 myLogicAPI.actualTime.Subscribe(
                     x =>actualTimeSubject.OnNext(x),  // onNext
+                    ex => Console.WriteLine($"Error: {ex.Message}"),         // onError
+                    () => Console.WriteLine("End of streaming.")           // onCompleted
+                );
+                
+                myLogicAPI.actualBoatCount.Subscribe(
+                    x =>actualBoatCountSubject.OnNext(x),  // onNext
+                    ex => Console.WriteLine($"Error: {ex.Message}"),         // onError
+                    () => Console.WriteLine("End of streaming.")           // onCompleted
+                );
+                
+                myLogicAPI.actualClientsCount.Subscribe(
+                    x =>actualClientsCountSubject.OnNext(x),  // onNext
                     ex => Console.WriteLine($"Error: {ex.Message}"),         // onError
                     () => Console.WriteLine("End of streaming.")           // onCompleted
                 );
@@ -69,6 +88,11 @@ namespace Model
             public override void SetPriceFilter(float minPrice, float maxPrice)
             {
                 myLogicAPI.SetPriceFilter(minPrice, maxPrice);
+            }
+
+            public override void SetSubsciptions(bool serverTime, bool boatsCount, bool clientsCount)
+            {
+                myLogicAPI.SetSubsciptions(serverTime, boatsCount, clientsCount);
             }
         }
 

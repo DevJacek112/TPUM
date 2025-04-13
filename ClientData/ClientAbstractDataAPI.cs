@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using ClientData.DTO;
 
 namespace ClientData;
 
@@ -13,9 +14,17 @@ public abstract class ClientAbstractDataAPI
     
     public abstract ObservableCollection<BoatDTO> GetAllBoats();
     
+    
     private Subject<int> actualTimeSubject = new Subject<int>();
     public IObservable<int> actualTime => actualTimeSubject.AsObservable();
+    
+    private Subject<int> actualBoatCountSubject = new Subject<int>();
+    public IObservable<int> actualBoatCount => actualBoatCountSubject.AsObservable();
+    
+    private Subject<int> actualClientsCountSubject = new Subject<int>();
+    public IObservable<int> actualClientsCount => actualClientsCountSubject.AsObservable();
 
+    
     public abstract void BuyBoatById(int id);
     public abstract void SetPriceFilter(float minPrice, float maxPrice);
 
@@ -81,10 +90,12 @@ public abstract class ClientAbstractDataAPI
                         UpdateBoats(boats);
                     }
                 }
-                else if (message?.Type == "timeUpdated")
+                else if (message?.Type == "diagnosticsUpdated")
                 {
-                    var time = JSONManager.DeserializePayload<int>(message.Message);
-                    actualTimeSubject.OnNext(time);
+                    var diagnostics = JSONManager.DeserializePayload<DiagnosticsDTO>(message.Message);
+                    actualTimeSubject.OnNext(diagnostics.serverTimeOnline);
+                    actualBoatCountSubject.OnNext(diagnostics.numberOfAllBoats);
+                    actualClientsCountSubject.OnNext(diagnostics.numberOfActiveClients);
                 }
             }
             catch (Exception ex)

@@ -18,6 +18,7 @@ public abstract class ServerAbstractModelAPI
     public event Action<string>? OnTimePassed;
     
     public abstract void OnClientConnected(WebSocket webSocket);
+    public abstract void OnClientDisconnected(WebSocket webSocket);
     
     private class ServerModelAPI : ServerAbstractModelAPI
     {
@@ -30,7 +31,7 @@ public abstract class ServerAbstractModelAPI
             myLogicAPI = logicAPI;
             defaultPriceFilter = new PriceFilterDTO();
             myLogicAPI.actualTime.Subscribe(
-                x =>PrepareAndSendTimePassed(x),  // onNext
+                x =>PrepareAndSendDiagnostics(x),  // onNext
                 ex => Console.WriteLine($"Error: {ex.Message}"),         // onError
                 () => Console.WriteLine("End of streaming.")           // onCompleted
             );
@@ -43,7 +44,20 @@ public abstract class ServerAbstractModelAPI
             clients.Add(new ClientInfo(webSocket, defaultPriceFilter));
             PrepareAndSendBoatsList(webSocket);
         }
-        
+
+        public override void OnClientDisconnected(WebSocket webSocket)
+        {
+            Console.WriteLine($"Disconnected from {webSocket}");
+            foreach (var client in clients)
+            {
+                if (client.webSocket == webSocket)
+                {
+                    Console.WriteLine($"Disconnected from {client}");
+                    clients.Remove(client);
+                }
+            }
+        }
+
         public override void DeserializeString(WebSocket specificSocket, string json)
         {
             var message = JSONManager.DeserializeRawMessage(json);
@@ -73,9 +87,11 @@ public abstract class ServerAbstractModelAPI
             }
         }
 
-        private void PrepareAndSendTimePassed(int actualTime)
+        private void PrepareAndSendDiagnostics(int serverTimeOnline)
         {
-            string json = JSONManager.Serialize("timeUpdated", actualTime);
+            DiagnosticsDTO diagnosticsDto = new DiagnosticsDTO(serverTimeOnline, 
+                GetBoatsFromDatabase(defaultPriceFilter).Count, clients.Count);
+            string json = JSONManager.Serialize("diagnosticsUpdated", diagnosticsDto);
             OnTimePassed?.Invoke(json);
         }
 
@@ -101,8 +117,6 @@ public abstract class ServerAbstractModelAPI
             {
                 if (boat.Price >= filter.MinPrice && boat.Price <= filter.MaxPrice)
                 {
-                    //Console.WriteLine("dodaje lodz o cenie " + boat.Price);
-                    Console.WriteLine(filter.MinPrice);
                     var newBoat = new BoatDTO { Id = boat.Id, Name = boat.Name, Description = boat.Description, Price = boat.Price };
                     boatsDTO.Add(newBoat);
                 }

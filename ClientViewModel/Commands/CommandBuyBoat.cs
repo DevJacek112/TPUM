@@ -21,10 +21,6 @@ namespace ViewModel
             {
                 modelAPI.BuyBoat(boat.Id);
             }
-            else
-            {
-                //Console.WriteLine("Invalid parameter passed to Execute.");
-            }
         }
     }
 

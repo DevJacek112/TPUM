@@ -19,21 +19,51 @@ using ClientData;
         
         public abstract void SetPriceFilter(float minPrice, float maxPrice);
         
+        
         private Subject<int> actualTimeSubject = new Subject<int>();
         public IObservable<int> actualTime => actualTimeSubject.AsObservable();
+        
+        private Subject<int> actualBoatCountSubject = new Subject<int>();
+        public IObservable<int> actualBoatCount => actualBoatCountSubject.AsObservable();
+        
+        private Subject<int> actualClientsCountSubject = new Subject<int>();
+        public IObservable<int> actualClientsCount => actualClientsCountSubject.AsObservable();
+        
+        public abstract void SetSubsciptions(bool showServerTime, bool showBoatsCount, bool showClientsCount);
+        
         private class ClientLogicAPI : ClientAbstractLogicAPI
         {
             private readonly ClientAbstractDataAPI myDataAPI;
+            
+            private BehaviorSubject<bool> showTimeSubject = new(false);
+            private BehaviorSubject<bool> showBoatCountSubject = new(false);
+            private BehaviorSubject<bool> showClientCountSubject = new(false);
             
             public ClientLogicAPI(ClientAbstractDataAPI? dataAPI)
             {
                 myDataAPI = dataAPI;
                 
-                myDataAPI.actualTime.Subscribe(
-                    x =>actualTimeSubject.OnNext(x),  // onNext
-                    ex => Console.WriteLine($"Error: {ex.Message}"),         // onError
-                    () => Console.WriteLine("End of streaming.")           // onCompleted
-                );
+                myDataAPI.actualTime
+                    .WithLatestFrom(showTimeSubject, (time, show) => new { time, show })
+                    .Where(x => x.show)
+                    .Select(x => x.time)
+                    .Subscribe(
+                        x => actualTimeSubject.OnNext(x),
+                        ex => Console.WriteLine($"Error: {ex.Message}"),
+                        () => Console.WriteLine("End of streaming.")
+                    );
+                
+                myDataAPI.actualBoatCount
+                    .WithLatestFrom(showBoatCountSubject, (count, show) => new { count, show })
+                    .Where(x => x.show)
+                    .Select(x => x.count)
+                    .Subscribe(x => actualBoatCountSubject.OnNext(x));
+
+                myDataAPI.actualClientsCount
+                    .WithLatestFrom(showClientCountSubject, (count, show) => new { count, show })
+                    .Where(x => x.show)
+                    .Select(x => x.count)
+                    .Subscribe(x => actualClientsCountSubject.OnNext(x));
             }
 
             public override ObservableCollection<BoatDTO> GetAllBoats()
@@ -50,6 +80,12 @@ using ClientData;
             {
                 myDataAPI.SetPriceFilter(minPrice, maxPrice);
             }
-        }
 
+            public override void SetSubsciptions(bool showServerTime, bool showBoatsCount, bool showClientsCount)
+            {
+                showTimeSubject.OnNext(showServerTime);
+                showBoatCountSubject.OnNext(showBoatsCount);
+                showClientCountSubject.OnNext(showClientsCount);
+            }
+        }
     }
