@@ -17,6 +17,9 @@ namespace Model
             return new ModelAPI (logicApi ?? ClientAbstractLogicAPI.createInstance());
         }
         
+        private Subject<string> newsletterSubject = new Subject<string>();
+        public IObservable<string> newsletter => newsletterSubject.AsObservable();
+        
         private Subject<int> actualTimeSubject = new Subject<int>();
         public IObservable<int> actualTime => actualTimeSubject.AsObservable();
         
@@ -38,6 +41,13 @@ namespace Model
                 myLogicAPI = logicApi;
                 myLogicAPI.GetAllBoats().CollectionChanged += CollectionUpdated;
                 LoadAllBoats();
+                
+                myLogicAPI.newsletter
+                    .Subscribe(
+                        x => newsletterSubject.OnNext(x),
+                        ex => Console.WriteLine($"Error: {ex.Message}"),
+                        () => Console.WriteLine("End of streaming.")
+                    );
                 
                 myLogicAPI.actualTime.Subscribe(
                     x =>actualTimeSubject.OnNext(x),  // onNext

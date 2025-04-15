@@ -23,6 +23,12 @@ namespace Logic
         private static int secondsElapsed = 0;
         private Subject<int> actualTimeSubject = new Subject<int>();
         public IObservable<int> actualTime => actualTimeSubject.AsObservable();
+        
+        private Subject<string> newsletterMessageSubject = new Subject<string>();
+        public IObservable<string> newsletterMessage => newsletterMessageSubject.AsObservable();
+        
+        private int idOfActualMessage = 0;
+        
         private class LogicApi : ServerAbstractLogicAPI
         {
             private readonly ServerAbstractDataAPI myDataAPI;
@@ -78,6 +84,20 @@ namespace Logic
             {
                 secondsElapsed++;
                 actualTimeSubject.OnNext(secondsElapsed);
+
+                if (secondsElapsed % 5 == 0)
+                {
+                    if (idOfActualMessage != myDataAPI.GetAllMessages().Count - 1)
+                    {
+                        newsletterMessageSubject.OnNext(myDataAPI.GetAllMessages()[idOfActualMessage].Text);
+                        idOfActualMessage++;
+                    }
+                    else
+                    {
+                        newsletterMessageSubject.OnNext(myDataAPI.GetAllMessages()[idOfActualMessage].Text);
+                        idOfActualMessage = 0;
+                    }
+                }
             }
         }
 

@@ -23,6 +23,9 @@ using ClientData;
         private Subject<int> actualTimeSubject = new Subject<int>();
         public IObservable<int> actualTime => actualTimeSubject.AsObservable();
         
+        private Subject<string> newsletterSubject = new Subject<string>();
+        public IObservable<string> newsletter => newsletterSubject.AsObservable();
+        
         private Subject<int> actualBoatCountSubject = new Subject<int>();
         public IObservable<int> actualBoatCount => actualBoatCountSubject.AsObservable();
         
@@ -42,6 +45,13 @@ using ClientData;
             public ClientLogicAPI(ClientAbstractDataAPI? dataAPI)
             {
                 myDataAPI = dataAPI;
+                
+                myDataAPI.newsletter
+                    .Subscribe(
+                        x => newsletterSubject.OnNext(x),
+                        ex => Console.WriteLine($"Error: {ex.Message}"),
+                        () => Console.WriteLine("End of streaming.")
+                    );
                 
                 myDataAPI.actualTime
                     .WithLatestFrom(showTimeSubject, (time, show) => new { time, show })

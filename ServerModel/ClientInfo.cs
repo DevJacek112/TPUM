@@ -6,10 +6,13 @@ public class ClientInfo
 {
     public WebSocket webSocket { get; set; }
     public PriceFilterDTO filter { get; set; }
+    
+    public bool isSignedToNewsLetter { get; set; }
 
     public ClientInfo(WebSocket socket, PriceFilterDTO filter)
     {
         this.filter = filter;
         webSocket = socket;
+        isSignedToNewsLetter = true;
     }
 }

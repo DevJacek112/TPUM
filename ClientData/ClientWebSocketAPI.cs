@@ -38,8 +38,8 @@ public class ClientWebSocketAPI
         while (_socket.State == WebSocketState.Open)
         {
             var result = await _socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            string response = Encoding.UTF8.GetString(buffer, 0, result.Count);
-            OnRawMessageReceived?.Invoke(response);
+            string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+            OnRawMessageReceived?.Invoke(message);
         }
     }
 }

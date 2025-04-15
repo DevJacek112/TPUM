@@ -112,6 +112,17 @@ public class ClientViewModelAPI : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+    
+    string newsletter;
+    public string Newsletter
+    {
+        get => newsletter;
+        set
+        {
+            newsletter = value;
+            OnPropertyChanged();
+        }
+    }
 
     public ClientViewModelAPI()
     {
@@ -137,6 +148,13 @@ public class ClientViewModelAPI : INotifyPropertyChanged
             ex => Console.WriteLine($"Error: {ex.Message}"),
             () => Console.WriteLine("End of streaming.")
         );
+        
+        modelAPI.newsletter
+            .Subscribe(
+                x => UpdateNewsletter(x),
+                ex => Console.WriteLine($"Error: {ex.Message}"),
+                () => Console.WriteLine("End of streaming.")
+            );
     }
 
     private void UpdateGUITimer(int time)
@@ -152,6 +170,12 @@ public class ClientViewModelAPI : INotifyPropertyChanged
     private void UpdateClientsCount(int clientsCount)
     {
         ClientsCount = clientsCount;
+    }
+
+    private void UpdateNewsletter(string newsletter)
+    {
+        Newsletter = newsletter;
+        Console.WriteLine($"News letter: {newsletter}");
     }
 
     private void OnPropertyChanged([CallerMemberName] string propertyName = null)

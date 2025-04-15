@@ -36,6 +36,12 @@ public abstract class ServerAbstractModelAPI
                 () => Console.WriteLine("End of streaming.")           // onCompleted
             );
             
+            myLogicAPI.newsletterMessage.Subscribe(
+                x =>PrepareAndSendNewsletter(x),  // onNext
+                ex => Console.WriteLine($"Error: {ex.Message}"),         // onError
+                () => Console.WriteLine("End of streaming.")           // onCompleted
+            );
+            
             clients = new List<ClientInfo>();
         }
         
@@ -104,6 +110,18 @@ public abstract class ServerAbstractModelAPI
                     var boats = GetBoatsFromDatabase(client.filter);
                     string json = JSONManager.Serialize("boatsListUpdated", boats);
                     OnBoatsListReady?.Invoke(socket, json);
+                }
+            }
+        }
+
+        private void PrepareAndSendNewsletter(string message)
+        {
+            foreach (var client in clients)
+            {
+                if (client.isSignedToNewsLetter)
+                {
+                    string json = JSONManager.Serialize("newsletter", message);
+                    OnBoatsListReady?.Invoke(client.webSocket, json);
                 }
             }
         }

@@ -23,6 +23,9 @@ public abstract class ClientAbstractDataAPI
     
     private Subject<int> actualClientsCountSubject = new Subject<int>();
     public IObservable<int> actualClientsCount => actualClientsCountSubject.AsObservable();
+    
+    private Subject<string> newsletterSubject = new Subject<string>();
+    public IObservable<string> newsletter => newsletterSubject.AsObservable();
 
     
     public abstract void BuyBoatById(int id);
@@ -96,6 +99,12 @@ public abstract class ClientAbstractDataAPI
                     actualTimeSubject.OnNext(diagnostics.serverTimeOnline);
                     actualBoatCountSubject.OnNext(diagnostics.numberOfAllBoats);
                     actualClientsCountSubject.OnNext(diagnostics.numberOfActiveClients);
+                }
+                
+                else if (message?.Type == "newsletter")
+                {   
+                    var newsletter =  JSONManager.DeserializePayload<string>(message.Message);
+                    newsletterSubject.OnNext(newsletter);
                 }
             }
             catch (Exception ex)
