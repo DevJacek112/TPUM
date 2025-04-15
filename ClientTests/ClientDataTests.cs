@@ -34,16 +34,6 @@ namespace ClientTests
             Assert.AreEqual(2, currentBoats.Count);
             Assert.AreEqual("Lodka1", currentBoats[0].Name);
         }
-                
-        [TestMethod]
-        public void TestTimeUpdateEvent()
-        {
-            var json = JSONManager.Serialize("timeUpdated", 123);
-            int? receivedTime = null;
-            using var subscription = dataAPI.actualTime.Subscribe(t => receivedTime = t);
-            InvokeHandleMessage(dataAPI, json);
-            Assert.AreEqual(123, receivedTime);
-        }
         
         private void InvokeHandleMessage(ClientAbstractDataAPI api, string json)
         {

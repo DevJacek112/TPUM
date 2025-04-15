@@ -24,16 +24,16 @@ namespace Tests
         [TestMethod]
         public void buyBoatIntegrity()
         {
-            Assert.AreEqual(3, dataAPI.GetAllBoats().Count);
-            Assert.AreEqual(3, logicAPI.GetAllBoats().Count);
+            Assert.AreEqual(13, dataAPI.GetAllBoats().Count);
+            Assert.AreEqual(13, logicAPI.GetAllBoats().Count);
 
             logicAPI.addBoat("Lodka1", "Mala lodka", 100.0f);
-            Assert.AreEqual(4, dataAPI.GetAllBoats().Count);
-            Assert.AreEqual(4, logicAPI.GetAllBoats().Count);
+            Assert.AreEqual(14, dataAPI.GetAllBoats().Count);
+            Assert.AreEqual(14, logicAPI.GetAllBoats().Count);
 
             Assert.AreEqual(true, logicAPI.buyBoat(1));
-            Assert.AreEqual(3, dataAPI.GetAllBoats().Count);
-            Assert.AreEqual(3, logicAPI.GetAllBoats().Count);
+            Assert.AreEqual(13, dataAPI.GetAllBoats().Count);
+            Assert.AreEqual(13, logicAPI.GetAllBoats().Count);
 
         }
 

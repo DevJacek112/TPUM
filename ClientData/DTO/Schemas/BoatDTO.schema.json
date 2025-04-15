@@ -1,0 +1,23 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "Type": {
+      "type": "string"
+    },
+    "Message": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Id": { "type": "integer" },
+          "Name": { "type": "string" },
+          "Description": { "type": "string" },
+          "Price": { "type": "integer" }
+        },
+        "required": ["Id", "Name", "Description", "Price"]
+      }
+    }
+  },
+  "required": ["Type", "Message"]
+}

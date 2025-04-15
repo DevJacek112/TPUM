@@ -1,0 +1,28 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "Type": {
+      "type": "string"
+    },
+    "Message": {
+      "type": "object",
+      "properties": {
+        "MinPrice": {
+          "type": "integer"
+        },
+        "MaxPrice": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "MinPrice",
+        "MaxPrice"
+      ]
+    }
+  },
+  "required": [
+    "Type",
+    "Message"
+  ]
+}

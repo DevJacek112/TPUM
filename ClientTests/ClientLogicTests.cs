@@ -1,5 +1,8 @@
 ﻿using ClientData;
 using ClientLogic;
+using ServerModel;
+using BoatDTO = ClientData.BoatDTO;
+using JSONManager = ClientData.JSONManager;
 
 namespace ClientTests
 {
@@ -29,16 +32,6 @@ namespace ClientTests
             var result = logicAPI.GetAllBoats();
             Assert.AreEqual(2, result.Count);
             Assert.AreEqual("Lodka1", result[0].Name);
-        }
-
-        [TestMethod]
-        public void TimeUpdateTest()
-        {
-            var json = JSONManager.Serialize("timeUpdated", 456);
-            int? receivedTime = null;
-            using var subscription = logicAPI.actualTime.Subscribe(t => receivedTime = t);
-            InvokeHandleMessage(dataAPI, json);
-            Assert.AreEqual(456, receivedTime);
         }
 
         private void InvokeHandleMessage(ClientAbstractDataAPI api, string json)

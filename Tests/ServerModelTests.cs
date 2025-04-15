@@ -1,4 +1,6 @@
-﻿namespace Tests;
+﻿using System.Net.WebSockets;
+
+namespace Tests;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServerModel;
@@ -21,8 +23,9 @@ public class ServerModelTests
     public void OnClientConnectedTest()
     {
         string? resultJson = null;
-        modelAPI.OnBoatsListReady += (json) => resultJson = json;
-        modelAPI.OnClientConnected();
+        WebSocket socket = new ClientWebSocket();
+        modelAPI.OnBoatsListReady += (socket ,json) => resultJson = json;
+        modelAPI.OnClientConnected(socket);
         string expectedJson = JSONManager.Serialize("boatsListUpdated", logicAPI.GetAllBoats().Select(b => new BoatDTO
         {
             Id = b.Id,
@@ -37,11 +40,12 @@ public class ServerModelTests
     [TestMethod]
     public void DeserializeStringTest()
     {
-        Assert.AreEqual(3, logicAPI.GetAllBoats().Count);
+        Assert.AreEqual(13, logicAPI.GetAllBoats().Count);
         
         string json = "{\"Type\":\"buy\",\"Message\":2}\n";
-        modelAPI.DeserializeString(json);
+        WebSocket socket = new ClientWebSocket();
+        modelAPI.DeserializeString(socket, json);
         
-        Assert.AreEqual(2, logicAPI.GetAllBoats().Count);
+        Assert.AreEqual(12, logicAPI.GetAllBoats().Count);
     }
 }

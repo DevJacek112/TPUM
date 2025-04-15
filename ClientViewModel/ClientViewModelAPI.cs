@@ -192,7 +192,6 @@ public class ClientViewModelAPI : INotifyPropertyChanged
     private void UpdateNewsletter(string newsletter)
     {
         Newsletter = newsletter;
-        Console.WriteLine($"News letter: {newsletter}");
     }
 
     private void OnPropertyChanged([CallerMemberName] string propertyName = null)

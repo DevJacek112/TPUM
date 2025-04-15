@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClientData\ClientData.csproj" />
-    <ProjectReference Include="..\ClientLogic\ClientLogic.csproj" />
     <ProjectReference Include="..\ServerModel\ServerModel.csproj" />
   </ItemGroup>
 

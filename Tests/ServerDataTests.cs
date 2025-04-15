@@ -16,11 +16,11 @@ namespace Tests
         [TestMethod]
         public void AddBoat()
         {
-            dataAPI.AddBoat(4, "Lodka4", "Mala lodka", 100.0f);
-            var boatTest = dataAPI.GetAllBoats()[3];
+            dataAPI.AddBoat(14, "Lodka14", "Mala lodka", 100.0f);
+            var boatTest = dataAPI.GetAllBoats()[13];
 
-            Assert.AreEqual(4, dataAPI.GetAllBoats().Count);
-            Assert.AreEqual("Lodka4", boatTest.Name);
+            Assert.AreEqual(14, dataAPI.GetAllBoats().Count);
+            Assert.AreEqual("Lodka14", boatTest.Name);
             Assert.AreEqual("Mala lodka", boatTest.Description);
             Assert.AreEqual(100.0f, boatTest.Price);
         }
@@ -28,10 +28,10 @@ namespace Tests
         [TestMethod]
         public void GetBoatById()
         {
-            dataAPI.AddBoat(4, "Lodka", "Duza lodz", 110.0f);
-            var boatTest = dataAPI.GetBoatById(4);
+            dataAPI.AddBoat(14, "Lodka", "Duza lodz", 110.0f);
+            var boatTest = dataAPI.GetBoatById(14);
 
-            Assert.AreEqual(4, dataAPI.GetAllBoats().Count);
+            Assert.AreEqual(14, dataAPI.GetAllBoats().Count);
             Assert.AreEqual("Lodka", boatTest.Name);
             Assert.AreEqual("Duza lodz", boatTest.Description);
             Assert.AreEqual(110.0f, boatTest.Price);
@@ -40,12 +40,11 @@ namespace Tests
         [TestMethod]
         public void RemoveBoat()
         {
+            Assert.AreEqual(13, dataAPI.GetAllBoats().Count);
             dataAPI.AddBoat(0, "Lodka", "Duza lodz", 110.0f);
-            var boatTest = dataAPI.GetBoatById(0);
-
-            Assert.AreEqual(4, dataAPI.GetAllBoats().Count);
+            Assert.AreEqual(14, dataAPI.GetAllBoats().Count);
             dataAPI.RemoveBoat(0);
-            Assert.AreEqual(3, dataAPI.GetAllBoats().Count);
+            Assert.AreEqual(13, dataAPI.GetAllBoats().Count);
         }
     }
     

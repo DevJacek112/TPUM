@@ -100,7 +100,6 @@ public class ServerWebSocketAPI
     {
         byte[] buffer = Encoding.UTF8.GetBytes(json);
         var segment = new ArraySegment<byte>(buffer);
-        
         lock (_lock)
         {
             foreach (var socket in _connectedSockets)

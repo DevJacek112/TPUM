@@ -1,0 +1,32 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "Type": {
+      "type": "string"
+    },
+    "Message": {
+      "type": "object",
+      "properties": {
+        "serverTimeOnline": {
+          "type": "integer"
+        },
+        "numberOfAllBoats": {
+          "type": "integer"
+        },
+        "numberOfActiveClients": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "serverTimeOnline",
+        "numberOfAllBoats",
+        "numberOfActiveClients"
+      ]
+    }
+  },
+  "required": [
+    "Type",
+    "Message"
+  ]
+}
