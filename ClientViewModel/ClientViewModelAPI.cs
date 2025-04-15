@@ -10,7 +10,8 @@ public class ClientViewModelAPI : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
     public CommandBuyBoat BuyBoatCom { get; }
     public CommandSetPriceFilter SetPriceFilterCom { get; }
-    public CommandChangeSubscriptions ChangeSubscriptionsCom { get; }
+    public CommandChangeFilters ChangeFiltersCom { get; }
+    public CommandChangeSubscription ChangeSubscriptionCom { get; }
 
     public ObservableCollection<IModelBoat> ModelBoats => modelAPI.GetModelBoats();
 
@@ -83,6 +84,21 @@ public class ClientViewModelAPI : INotifyPropertyChanged
         }
     }
 
+    private bool isNewsletterSubscribed;
+
+    public bool IsNewsletterSubscribed
+    {
+        get => isNewsletterSubscribed;
+        set
+        {
+            if (isNewsletterSubscribed != value)
+            {
+                isNewsletterSubscribed = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
     public int ActualTime
     {
         get => actualTime;
@@ -129,7 +145,8 @@ public class ClientViewModelAPI : INotifyPropertyChanged
         modelAPI = ClientAbstractModelAPI.createInstance();
         BuyBoatCom = new CommandBuyBoat(modelAPI);
         SetPriceFilterCom = new CommandSetPriceFilter(modelAPI, this);
-        ChangeSubscriptionsCom = new CommandChangeSubscriptions(modelAPI, this);
+        ChangeFiltersCom = new CommandChangeFilters(modelAPI, this);
+        ChangeSubscriptionCom = new CommandChangeSubscription(modelAPI, this);
 
         modelAPI.actualTime.Subscribe(
             x => UpdateGUITimer(x),

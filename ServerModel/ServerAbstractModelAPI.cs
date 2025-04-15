@@ -53,12 +53,10 @@ public abstract class ServerAbstractModelAPI
 
         public override void OnClientDisconnected(WebSocket webSocket)
         {
-            Console.WriteLine($"Disconnected from {webSocket}");
             foreach (var client in clients)
             {
                 if (client.webSocket == webSocket)
                 {
-                    Console.WriteLine($"Disconnected from {client}");
                     clients.Remove(client);
                 }
             }
@@ -91,6 +89,19 @@ public abstract class ServerAbstractModelAPI
                     }
                 }
             }
+            
+            else if (message?.Type == "subscription")
+            {
+                var subscription = JSONManager.DeserializePayload<bool>(message.Message);
+                
+                foreach (var client in clients)
+                {
+                    if (client.webSocket == specificSocket)
+                    {
+                        client.isSignedToNewsletter = subscription;
+                    }
+                }
+            }
         }
 
         private void PrepareAndSendDiagnostics(int serverTimeOnline)
@@ -118,7 +129,7 @@ public abstract class ServerAbstractModelAPI
         {
             foreach (var client in clients)
             {
-                if (client.isSignedToNewsLetter)
+                if (client.isSignedToNewsletter)
                 {
                     string json = JSONManager.Serialize("newsletter", message);
                     OnBoatsListReady?.Invoke(client.webSocket, json);

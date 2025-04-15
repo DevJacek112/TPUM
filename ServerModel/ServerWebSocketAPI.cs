@@ -71,8 +71,6 @@ public class ServerWebSocketAPI
                 var json = Encoding.UTF8.GetString(buffer, 0, result.Count);
             
                 _serverAbstractModel.DeserializeString(socket, json);
-            
-                Console.WriteLine(json);
             }
         }
         catch

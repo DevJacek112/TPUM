@@ -32,7 +32,9 @@ namespace Model
         public abstract void BuyBoat(int id);
         
         public abstract void SetPriceFilter(float minPrice, float maxPrice);
-        public abstract void SetSubsciptions(bool serverTime, bool boatsCount, bool clientsCount);
+        public abstract void SetFilters(bool serverTime, bool boatsCount, bool clientsCount);
+        
+        public abstract void SetSubscription(bool isNewsletterSubscribed);
         
         private class ModelAPI : ClientAbstractModelAPI
         {
@@ -100,12 +102,16 @@ namespace Model
                 myLogicAPI.SetPriceFilter(minPrice, maxPrice);
             }
 
-            public override void SetSubsciptions(bool serverTime, bool boatsCount, bool clientsCount)
+            public override void SetFilters(bool serverTime, bool boatsCount, bool clientsCount)
             {
-                myLogicAPI.SetSubsciptions(serverTime, boatsCount, clientsCount);
+                myLogicAPI.SetFilters(serverTime, boatsCount, clientsCount);
+            }
+            
+            public override void SetSubscription(bool isNewsletterSubscribed)
+            {
+                myLogicAPI.SetSubscription(isNewsletterSubscribed);
             }
         }
-
     }
 
 }

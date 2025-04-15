@@ -30,6 +30,7 @@ public abstract class ClientAbstractDataAPI
     
     public abstract void BuyBoatById(int id);
     public abstract void SetPriceFilter(float minPrice, float maxPrice);
+    public abstract void SendSetSubscription(bool value);
 
     private class ClientDataAPI : ClientAbstractDataAPI
     {
@@ -76,7 +77,12 @@ public abstract class ClientAbstractDataAPI
             var filters = new PriceFilterDTO{MinPrice = minPrice, MaxPrice = maxPrice};
             var json = JSONManager.Serialize("priceFilter", filters);
             _ = _clientWebSocket.SendRawJsonAsync(json);
-            Console.WriteLine(json);
+        }
+
+        public override void SendSetSubscription(bool value)
+        {
+            var json = JSONManager.Serialize("subscription", value);
+            _ = _clientWebSocket.SendRawJsonAsync(json);
         }
         
         private void HandleMessage(string json)

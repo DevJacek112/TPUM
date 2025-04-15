@@ -3,13 +3,13 @@ using Model;
 
 namespace ViewModel;
 
-public class CommandChangeSubscriptions : ICommand
+public class CommandChangeSubscription : ICommand
 {
     
     private readonly ClientAbstractModelAPI modelAPI;
     private readonly ClientViewModelAPI viewModelAPI;
 
-    public CommandChangeSubscriptions(ClientAbstractModelAPI modelAPI, ClientViewModelAPI viewModelAPI)
+    public CommandChangeSubscription(ClientAbstractModelAPI modelAPI, ClientViewModelAPI viewModelAPI)
     {
         this.modelAPI = modelAPI ?? throw new ArgumentNullException(nameof(modelAPI));
         this.viewModelAPI = viewModelAPI ?? throw new ArgumentNullException(nameof(viewModelAPI));
@@ -22,8 +22,9 @@ public class CommandChangeSubscriptions : ICommand
 
     public void Execute(object? parameter)
     {
-        modelAPI.SetSubsciptions(viewModelAPI.ShowTime, viewModelAPI.ShowBoatCount, viewModelAPI.ShowClientCount);
+        modelAPI.SetSubscription(viewModelAPI.IsNewsletterSubscribed);
     }
 
     public event EventHandler? CanExecuteChanged;
+    
 }

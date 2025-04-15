@@ -32,7 +32,9 @@ using ClientData;
         private Subject<int> actualClientsCountSubject = new Subject<int>();
         public IObservable<int> actualClientsCount => actualClientsCountSubject.AsObservable();
         
-        public abstract void SetSubsciptions(bool showServerTime, bool showBoatsCount, bool showClientsCount);
+        public abstract void SetFilters(bool showServerTime, bool showBoatsCount, bool showClientsCount);
+        
+        public abstract void SetSubscription(bool isNewsletterSubscribed);
         
         private class ClientLogicAPI : ClientAbstractLogicAPI
         {
@@ -41,6 +43,8 @@ using ClientData;
             private BehaviorSubject<bool> showTimeSubject = new(false);
             private BehaviorSubject<bool> showBoatCountSubject = new(false);
             private BehaviorSubject<bool> showClientCountSubject = new(false);
+            
+            private BehaviorSubject<bool> showSubscriptionText = new(false);
             
             public ClientLogicAPI(ClientAbstractDataAPI? dataAPI)
             {
@@ -91,11 +95,17 @@ using ClientData;
                 myDataAPI.SetPriceFilter(minPrice, maxPrice);
             }
 
-            public override void SetSubsciptions(bool showServerTime, bool showBoatsCount, bool showClientsCount)
+            public override void SetFilters(bool showServerTime, bool showBoatsCount, bool showClientsCount)
             {
                 showTimeSubject.OnNext(showServerTime);
                 showBoatCountSubject.OnNext(showBoatsCount);
                 showClientCountSubject.OnNext(showClientsCount);
+            }
+
+            public override void SetSubscription(bool isNewsletterSubscribed)
+            {
+                showSubscriptionText.OnNext(isNewsletterSubscribed);
+                myDataAPI.SendSetSubscription(isNewsletterSubscribed);
             }
         }
     }
