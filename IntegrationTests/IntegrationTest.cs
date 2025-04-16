@@ -1,14 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace IntegrationTests
+﻿namespace IntegrationTests
 {
-    using ServerModel;
-    using ClientData;
-    using JSONManager = ServerModel.JSONManager;
-
     [TestClass]
     public sealed class IntegrationTest
     {
@@ -23,7 +14,7 @@ namespace IntegrationTests
                 {
                     if (!_serverStarted)
                     {
-                        var server = new ServerWebSocketAPI();
+                        var server = new ServerModel.ServerWebSocketAPI();
                         _ = Task.Run(() => server.StartAsync());
                         _serverStarted = true;
                     }
@@ -35,7 +26,7 @@ namespace IntegrationTests
 
         private async Task WaitForServerAsync(int timeoutMs = 5000)
         {
-            var client = new ClientWebSocketAPI();
+            var client = new ClientData.ClientWebSocketAPI();
             var start = DateTime.UtcNow;
             Exception? lastException = null;
 
@@ -61,7 +52,7 @@ namespace IntegrationTests
         {
             await EnsureServerStartedAsync();
 
-            var client = new ClientWebSocketAPI();
+            var client = new ClientData.ClientWebSocketAPI();
             var tcs = new TaskCompletionSource<string>();
 
             client.OnRawMessageReceived += (message) =>
@@ -70,7 +61,7 @@ namespace IntegrationTests
             };
 
             await client.ConnectAsync();
-            string jsonBuy = JSONManager.Serialize("buy", 1);
+            string jsonBuy = ServerModel.JSONManager.Serialize("buy", 1);
             await client.SendRawJsonAsync(jsonBuy);
 
             var completed = await Task.WhenAny(tcs.Task, Task.Delay(5000));
@@ -84,7 +75,7 @@ namespace IntegrationTests
         {
             await EnsureServerStartedAsync();
 
-            var client = new ClientWebSocketAPI();
+            var client = new ClientData.ClientWebSocketAPI();
             var tcs = new TaskCompletionSource<string>();
 
             client.OnRawMessageReceived += (msg) =>
@@ -94,7 +85,7 @@ namespace IntegrationTests
             };
 
             await client.ConnectAsync();
-            string jsonFilter = JSONManager.Serialize("filter", 5000);
+            string jsonFilter = ServerModel.JSONManager.Serialize("filter", 5000);
             await client.SendRawJsonAsync(jsonFilter);
 
             var completed = await Task.WhenAny(tcs.Task, Task.Delay(5000));
@@ -108,7 +99,7 @@ namespace IntegrationTests
         {
             await EnsureServerStartedAsync();
 
-            var client = new ClientWebSocketAPI();
+            var client = new ClientData.ClientWebSocketAPI();
             var tcs = new TaskCompletionSource<string>();
 
             client.OnRawMessageReceived += (msg) =>
@@ -118,7 +109,7 @@ namespace IntegrationTests
             };
 
             await client.ConnectAsync();
-            string jsonDiag = JSONManager.Serialize("diagnostics", "testdiag");
+            string jsonDiag = ServerModel.JSONManager.Serialize("diagnostics", "testdiag");
             await client.SendRawJsonAsync(jsonDiag);
 
             var completed = await Task.WhenAny(tcs.Task, Task.Delay(5000));
