@@ -1,40 +1,78 @@
-﻿using ServerModel;
-using ClientData;
-using JSONManager = ServerModel.JSONManager;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace IntegrationTests
 {
+    using ServerModel;
+    using ClientData;
+    using JSONManager = ServerModel.JSONManager;
+
     [TestClass]
     public sealed class IntegrationTest
     {
         private static bool _serverStarted = false;
+        private static readonly object _lock = new();
 
-        [TestInitialize]
-        public void Setup()
+        private async Task EnsureServerStartedAsync()
         {
             if (!_serverStarted)
             {
-                var server = new ServerWebSocketAPI();
-                _ = Task.Run(() => server.StartAsync());
-                Thread.Sleep(1000);
-                _serverStarted = true;
+                lock (_lock)
+                {
+                    if (!_serverStarted)
+                    {
+                        var server = new ServerWebSocketAPI();
+                        _ = Task.Run(() => server.StartAsync());
+                        _serverStarted = true;
+                    }
+                }
+
+                await WaitForServerAsync();
             }
+        }
+
+        private async Task WaitForServerAsync(int timeoutMs = 5000)
+        {
+            var client = new ClientWebSocketAPI();
+            var start = DateTime.UtcNow;
+            Exception? lastException = null;
+
+            while ((DateTime.UtcNow - start).TotalMilliseconds < timeoutMs)
+            {
+                try
+                {
+                    await client.ConnectAsync();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    lastException = ex;
+                    await Task.Delay(100);
+                }
+            }
+
+            throw new Exception("Failed to connect to server within timeout", lastException);
         }
 
         [TestMethod]
         public async Task BuyBoatIntegration()
         {
+            await EnsureServerStartedAsync();
+
             var client = new ClientWebSocketAPI();
-            string? receivedMessage = null;
             var tcs = new TaskCompletionSource<string>();
+
             client.OnRawMessageReceived += (message) =>
             {
-                receivedMessage = message;
                 tcs.TrySetResult(message);
             };
+
             await client.ConnectAsync();
             string jsonBuy = JSONManager.Serialize("buy", 1);
             await client.SendRawJsonAsync(jsonBuy);
+
             var completed = await Task.WhenAny(tcs.Task, Task.Delay(5000));
             Assert.IsTrue(completed == tcs.Task, "No message received in time.");
             var message = tcs.Task.Result;
@@ -44,6 +82,8 @@ namespace IntegrationTests
         [TestMethod]
         public async Task FilterUpdateIntegration()
         {
+            await EnsureServerStartedAsync();
+
             var client = new ClientWebSocketAPI();
             var tcs = new TaskCompletionSource<string>();
 
@@ -66,6 +106,8 @@ namespace IntegrationTests
         [TestMethod]
         public async Task DiagnosticsRequestIntegration()
         {
+            await EnsureServerStartedAsync();
+
             var client = new ClientWebSocketAPI();
             var tcs = new TaskCompletionSource<string>();
 
