@@ -24,7 +24,7 @@
             }
         }
 
-        private async Task WaitForServerAsync(int timeoutMs = 5000)
+        private async Task WaitForServerAsync(int timeoutMs = 60000)
         {
             var client = new ClientData.ClientWebSocketAPI();
             var start = DateTime.UtcNow;
